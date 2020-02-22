@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Scum graph</string>
+    <string name="remove">Remove</string>
+    <string name="players_name">Player\'s name</string>
+    <string name="add_player">Add player</string>
+    <string name="start_game">Start game</string>
+    <string name="first_add_all_the_players">First, add all the players.</string>
 </resources>
