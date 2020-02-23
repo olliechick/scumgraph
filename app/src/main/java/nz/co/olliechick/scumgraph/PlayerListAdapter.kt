@@ -70,6 +70,7 @@ class PlayerListAdapter(
                 notifyItemRangeChanged(players.size - 1, players.size)
                 manager.scrollToPosition(players.size)
             }
+            holder.button?.isEnabled = players.size < ColourOption.values().size
         } else {
             // Player entry - textbox and remove button
             holder.playerName?.setText(players[holder.adapterPosition].name)
