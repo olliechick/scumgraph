@@ -1,4 +1,4 @@
-package nz.co.olliechick.scumgraph
+package nz.co.olliechick.scumgraph.util
 
 import androidx.annotation.ColorInt
 

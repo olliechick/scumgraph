@@ -1,7 +1,6 @@
 package nz.co.olliechick.scumgraph
 
 import android.app.Activity
-import android.graphics.Color
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -10,13 +9,13 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
-import androidx.annotation.ColorInt
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import nz.co.olliechick.scumgraph.util.ColourOption
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getAllColourOptions
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getNextFreeColour
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getTextColour
+import nz.co.olliechick.scumgraph.util.Player
 import petrov.kristiyan.colorpicker.ColorPicker
 
 

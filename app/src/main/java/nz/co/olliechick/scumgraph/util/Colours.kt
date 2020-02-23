@@ -3,7 +3,6 @@ package nz.co.olliechick.scumgraph.util
 import android.graphics.Color
 import android.util.Log
 import androidx.annotation.ColorInt
-import nz.co.olliechick.scumgraph.Player
 import java.lang.Long.parseLong
 
 class Colours {
