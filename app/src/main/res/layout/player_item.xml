@@ -4,6 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
+    <Button
+        android:id="@+id/pickColourButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:drawablePadding="10dp"
+        android:padding="20dp"
+        android:text="@string/pick_colour" />
+
     <EditText
         android:id="@+id/playerName"
         android:layout_width="wrap_content"
@@ -16,7 +25,7 @@
         tools:ignore="UnusedAttribute" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/removeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="1"

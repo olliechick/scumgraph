@@ -5,4 +5,5 @@
     <string name="add_player">Add player</string>
     <string name="start_game">Start game</string>
     <string name="first_add_all_the_players">First, add all the players.</string>
+    <string name="pick_colour">Pick colour</string>
 </resources>
