@@ -1,5 +1,8 @@
 package nz.co.olliechick.scumgraph.util
 
+import android.content.Context
+import nz.co.olliechick.scumgraph.R
+
 
 class ScumHelpers {
     companion object {
@@ -52,6 +55,13 @@ class ScumHelpers {
                 }
                 options
             }
+        }
+
+        fun generateTitle(position: Int, numberOfMiddlemen: Int, numberOfPlayers: Int, context: Context): String {
+            val numberOfScum = (numberOfPlayers - numberOfMiddlemen) / 2
+            if (position < numberOfScum) return context.getString(R.string.president)
+            else if (position < (numberOfPlayers - numberOfScum)) return context.getString(R.string.middleman)
+            else return context.getString(R.string.scum)
         }
     }
 }

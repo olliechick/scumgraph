@@ -11,4 +11,7 @@
     <string name="next_round">Next round</string>
     <string name="round_1">Round 1</string>
     <string name="round_n">Round %1$d</string>
+    <string name="president">President</string>
+    <string name="middleman">Middleman</string>
+    <string name="scum">Scum</string>
 </resources>

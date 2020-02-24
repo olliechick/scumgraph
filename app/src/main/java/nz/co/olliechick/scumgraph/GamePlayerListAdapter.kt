@@ -11,9 +11,11 @@ import nz.co.olliechick.scumgraph.draggablelist.ItemViewHolder
 import nz.co.olliechick.scumgraph.draggablelist.OnStartDragListener
 import nz.co.olliechick.scumgraph.util.Colours
 import nz.co.olliechick.scumgraph.util.Player
+import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.generateTitle
 import java.util.*
 
 class GamePlayerListAdapter(
+    private val numberOfMiddlemen: Int,
     private val players: ArrayList<Player>,
     private val dragStartListener: OnStartDragListener,
     private val context: Context
@@ -33,8 +35,9 @@ class GamePlayerListAdapter(
     @SuppressLint("ClickableViewAccessibility") //todo override performClick
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val player = players[position]
-        holder.textView?.text = player.name
-        holder.handleView?.setOnTouchListener { v, event ->
+        holder.textView?.text =
+            "${generateTitle(position, numberOfMiddlemen, players.size, context)}: ${player.name}"
+        holder.handleView?.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) dragStartListener.onStartDrag(holder)
             false
         }
@@ -57,6 +60,7 @@ class GamePlayerListAdapter(
         if (fromPosition < toPosition) {
             for (i in fromPosition until toPosition) {
                 Collections.swap(players, i, i + 1)
+                notifyItemChanged(i, false)
             }
         } else {
             for (i in fromPosition downTo toPosition + 1) {
@@ -64,5 +68,7 @@ class GamePlayerListAdapter(
             }
         }
         notifyItemMoved(fromPosition, toPosition)
+        notifyItemChanged(fromPosition, false)
+        notifyItemChanged(toPosition, false)
     }
 }

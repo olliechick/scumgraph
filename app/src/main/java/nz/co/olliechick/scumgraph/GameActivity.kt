@@ -37,7 +37,7 @@ class GameActivity : AppCompatActivity(),
         else arrayListOf()
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = GamePlayerListAdapter(players, this, this)
+        val adapter = GamePlayerListAdapter(numberOfMiddlemen, players, this, this)
         recyclerView.adapter = adapter
         val callback = SimpleItemTouchHelperCallback(adapter)
         touchHelper = ItemTouchHelper(callback)
