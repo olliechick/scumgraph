@@ -32,11 +32,11 @@ class GamePlayerListAdapter(
             )
         )
 
-    @SuppressLint("ClickableViewAccessibility") //todo override performClick
+    @SuppressLint("ClickableViewAccessibility", "SetTextI18n") //todo override performClick
     override fun onBindViewHolder(holder: ItemViewHolder, position: Int) {
         val player = players[position]
         holder.textView?.text =
-            "${generateTitle(position, numberOfMiddlemen, players.size, context)}: ${player.name}"
+            "${player.name}: ${generateTitle(position, numberOfMiddlemen, players.size, context)}"
         holder.handleView?.setOnTouchListener { _, event ->
             if (event.actionMasked == MotionEvent.ACTION_DOWN) dragStartListener.onStartDrag(holder)
             false

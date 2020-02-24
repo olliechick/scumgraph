@@ -57,11 +57,20 @@ class ScumHelpers {
             }
         }
 
-        fun generateTitle(position: Int, numberOfMiddlemen: Int, numberOfPlayers: Int, context: Context): String {
+        fun generateTitle(
+            position: Int,
+            numberOfMiddlemen: Int,
+            numberOfPlayers: Int,
+            context: Context
+        ): String {
             val numberOfScum = (numberOfPlayers - numberOfMiddlemen) / 2
-            if (position < numberOfScum) return context.getString(R.string.president)
-            else if (position < (numberOfPlayers - numberOfScum)) return context.getString(R.string.middleman)
-            else return context.getString(R.string.scum)
+            return when {
+                position < numberOfScum -> (context.getString(R.string.vice) + ' ').repeat(position) +
+                        context.getString(R.string.president)
+                position < (numberOfPlayers - numberOfScum) -> context.getString(R.string.middleman)
+                else -> (context.getString(R.string.vice) + ' ').repeat(numberOfPlayers - position - 1) +
+                        context.getString(R.string.scum)
+            }
         }
     }
 }
