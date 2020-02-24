@@ -9,13 +9,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.start_game_dialog.view.*
 import nz.co.olliechick.scumgraph.util.ColourOption
 import nz.co.olliechick.scumgraph.util.Colours.Companion.colourOptionToInt
 import nz.co.olliechick.scumgraph.util.MiddlemanOption
 import nz.co.olliechick.scumgraph.util.Player
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.generateMiddlemenOptions
-import org.jetbrains.anko.toast
 
 
 class MainActivity : AppCompatActivity() {
@@ -33,17 +33,14 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         viewManager = LinearLayoutManager(this)
-        viewAdapter = PlayerListAdapter(players, viewManager as LinearLayoutManager, this)
+        viewAdapter = CreatePlayerListAdapter(players, viewManager as LinearLayoutManager, this)
 
         recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
 
-            // use a linear layout manager
             layoutManager = viewManager
-
-            // specify an viewAdapter (see also next example)
             adapter = viewAdapter
 
         }
@@ -82,6 +79,7 @@ class MainActivity : AppCompatActivity() {
     private fun openGameScreen(numberOfMiddlemen: Int) {
         val intent = Intent(this, GameActivity::class.java)
         intent.putExtra("Number of middlemen", numberOfMiddlemen)
+        intent.putExtra("Players", Gson().toJson(players))
         startActivity(intent)
     }
 }

@@ -1,31 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/item"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="?listPreferredItemHeight"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?selectableItemBackground">
 
-    <Button
-        android:id="@+id/pickColourButton"
+    <TextView
+        android:id="@+id/text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/pick_colour" />
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="16dp"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <EditText
-        android:id="@+id/playerName"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:autofillHints="name"
-        android:ems="10"
-        android:hint="@string/players_name"
-        android:inputType="textPersonName"
-        tools:ignore="UnusedAttribute" />
-
-    <Button
-        android:id="@+id/removeButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="@string/remove" />
-</LinearLayout>
+    <ImageView
+        android:id="@+id/handle"
+        android:layout_width="?listPreferredItemHeight"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical|end"
+        android:scaleType="center"
+        tools:ignore="ContentDescription" />
+</FrameLayout>

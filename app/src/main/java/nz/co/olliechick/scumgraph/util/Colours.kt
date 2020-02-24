@@ -1,9 +1,9 @@
 package nz.co.olliechick.scumgraph.util
 
 import android.graphics.Color
-import android.util.Log
 import androidx.annotation.ColorInt
 import java.lang.Long.parseLong
+import kotlin.math.roundToInt
 
 class Colours {
     companion object {
@@ -13,7 +13,7 @@ class Colours {
          * @param color background color
          * @return true if the text should be white, false if the text should be black
          */
-        private fun isWhiteText(@ColorInt color: Int): Boolean {
+        fun isWhiteText(@ColorInt color: Int): Boolean {
             val red = Color.red(color)
             val green = Color.green(color)
             val blue = Color.blue(color)
@@ -21,7 +21,6 @@ class Colours {
             // https://en.wikipedia.org/wiki/YIQ
             // https://24ways.org/2010/calculating-color-contrast/
             val yiq = (red * 299 + green * 587 + blue * 114) / 1000
-            Log.i("scum", (yiq < 192).toString() + yiq)
             return yiq < 192
         }
 
@@ -37,7 +36,6 @@ class Colours {
         }
 
         fun colourOptionToInt(rgb: String): Int {
-            Log.i("scum", rgb)
             var red = parseLong(rgb.substring(1, 3), 16).toInt()
             var green = parseLong(rgb.substring(3, 5), 16).toInt()
             var blue = parseLong(rgb.substring(5, 7), 16).toInt()
@@ -74,6 +72,15 @@ class Colours {
             }
 
             return 0
+        }
+
+        @ColorInt
+        fun adjustAlpha(@ColorInt color: Int, factor: Double): Int {
+            val alpha = (Color.alpha(color) * factor).roundToInt()
+            val red = Color.red(color)
+            val green = Color.green(color)
+            val blue = Color.blue(color)
+            return Color.argb(alpha, red, green, blue)
         }
     }
 }
