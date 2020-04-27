@@ -3,12 +3,15 @@ package nz.co.olliechick.scumgraph
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.start_game_dialog.view.*
 import nz.co.olliechick.scumgraph.util.ColourOption
@@ -27,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         Player("", colourOptionToInt(ColourOption.BLUE)),
         Player("", colourOptionToInt(ColourOption.RED))
     )
+    private var castContext: CastContext? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,8 +46,20 @@ class MainActivity : AppCompatActivity() {
 
             layoutManager = viewManager
             adapter = viewAdapter
-
         }
+
+        castContext = CastContext.getSharedInstance(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.gamemenu, menu)
+        CastButtonFactory.setUpMediaRouteButton(
+            applicationContext,
+            menu,
+            R.id.media_route_menu_item
+        )
+        return true
     }
 
     @SuppressLint("InflateParams")

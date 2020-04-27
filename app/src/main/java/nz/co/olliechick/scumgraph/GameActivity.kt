@@ -1,12 +1,15 @@
 package nz.co.olliechick.scumgraph
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.gms.cast.framework.CastButtonFactory
+import com.google.android.gms.cast.framework.CastContext
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_game.*
@@ -23,6 +26,7 @@ class GameActivity : AppCompatActivity(),
     var numberOfMiddlemen = 0
     var players = arrayListOf<Player>()
     private var touchHelper: ItemTouchHelper? = null
+    private var castContext: CastContext? = null
 
     private inline fun <reified T> Gson.fromJson(json: String) =
         fromJson<T>(json, object : TypeToken<T>() {}.type)
@@ -42,6 +46,19 @@ class GameActivity : AppCompatActivity(),
         val callback = SimpleItemTouchHelperCallback(adapter)
         touchHelper = ItemTouchHelper(callback)
         touchHelper?.attachToRecyclerView(recyclerView)
+
+        castContext = CastContext.getSharedInstance(this)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        super.onCreateOptionsMenu(menu)
+        menuInflater.inflate(R.menu.gamemenu, menu)
+        CastButtonFactory.setUpMediaRouteButton(
+            applicationContext,
+            menu,
+            R.id.media_route_menu_item
+        )
+        return true
     }
 
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder?) {
