@@ -3,6 +3,8 @@ An Android app to view a graph for the card game Scum on a Chromecast.
 
 🚧 Currently under construction 🚧
 
+The accompanying cast receiver app, which is what is displayed on the Chromecast (i.e. on the TV), is being developed at https://github.com/olliechick/scumgraph-cast.
+
 ## Running locally
 
 * Download the subproject.
