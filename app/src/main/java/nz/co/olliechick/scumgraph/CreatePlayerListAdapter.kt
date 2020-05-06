@@ -21,7 +21,8 @@ import petrov.kristiyan.colorpicker.ColorPicker
 class CreatePlayerListAdapter(
     private val players: ArrayList<Player>,
     private val manager: LinearLayoutManager,
-    private val activity: Activity
+    private val activity: Activity,
+    private val notifyPlayerListUpdated: () -> Unit
 ) :
     RecyclerView.Adapter<CreatePlayerListAdapter.PlayerViewHolder>() {
 
@@ -52,6 +53,7 @@ class CreatePlayerListAdapter(
             // The "Add player" button
             holder.button?.setOnClickListener {
                 players.add(Player("", getNextFreeColour(players)))
+                notifyPlayerListUpdated()
                 notifyItemInserted(players.size - 1)
                 notifyItemRangeChanged(players.size - 1, players.size)
                 manager.scrollToPosition(players.size)
@@ -64,6 +66,7 @@ class CreatePlayerListAdapter(
             holder.playerName?.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable) {
                     players[holder.adapterPosition].name = s.toString()
+                    notifyPlayerListUpdated()
                 }
 
                 override fun beforeTextChanged(
@@ -83,6 +86,7 @@ class CreatePlayerListAdapter(
                     players.removeAt(pos)
                     notifyItemRemoved(pos)
                     notifyItemRangeChanged(pos, players.size)
+                    notifyPlayerListUpdated()
                 }
             }
 
@@ -96,6 +100,7 @@ class CreatePlayerListAdapter(
                         players[holder.adapterPosition].colour = colour
                         holder.pickColourButton.setBackgroundColor(colour)
                         holder.pickColourButton.setTextColor(getTextColour(colour))
+                        notifyPlayerListUpdated()
                     }
 
                     override fun onCancel() {}

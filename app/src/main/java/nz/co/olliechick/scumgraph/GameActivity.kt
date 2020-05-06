@@ -10,10 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.gms.cast.framework.CastButtonFactory
-import com.google.android.gms.cast.framework.CastContext
-import com.google.android.gms.cast.framework.CastSession
-import com.google.android.gms.cast.framework.SessionManagerListener
+import com.google.android.gms.cast.framework.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_game.*
@@ -33,8 +30,8 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     var players = arrayListOf<Player>()
     private var touchHelper: ItemTouchHelper? = null
     private var castContext: CastContext? = null
-
-    private val TAG = "scumgraph"
+    private var sessionManagerListener: SessionManagerListener<CastSession>? = null
+    private val TAG = "scumgraphlog"
 
     private inline fun <reified T> Gson.fromJson(json: String) =
         fromJson<T>(json, object : TypeToken<T>() {}.type)
@@ -56,35 +53,33 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         touchHelper?.attachToRecyclerView(recyclerView)
 
         castContext = CastContext.getSharedInstance(this)
+        sessionManagerListener = getSessionManagerListener(this)
         castContext?.sessionManager?.addSessionManagerListener(
-            getSessionManagerListener(this),
+            sessionManagerListener as SessionManagerListener<CastSession>,
             CastSession::class.java
         )
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        sessionManagerListener?.let {
+            castContext?.sessionManager?.removeSessionManagerListener(
+                it,
+                CastSession::class.java
+            )
+        }
+    }
+
     private fun getSessionManagerListener(context: Context): SessionManagerListener<CastSession> {
         return object : SessionManagerListener<CastSession> {
-            override fun onSessionStarting(castSession: CastSession?) {
-                Log.i(TAG, "session starting")
-            }
+            override fun onSessionStarting(castSession: CastSession?) {}
 
-            override fun onSessionStarted(castSession: CastSession?, s: String) {
-                Log.i(TAG, "session started")
+            override fun onSessionStarted(castSession: CastSession?, sessionId: String) {
                 if (castSession != null) {
                     try {
-                        Log.i(TAG, "Creating channel")
-                        val playerListChannel = PlayerListChannel()
-                        castSession.setMessageReceivedCallbacks(
-                            playerListChannel.namespace,
-                            playerListChannel
-                        )
-
+                        //todo
                         try {
-                            val players = JSONObject(Gson().toJson(PlayerList(players))).toString()
-                            castSession.sendMessage(playerListChannel.namespace, players)
-                                .setResultCallback { result ->
-                                    if (!result.isSuccess) Log.e(TAG, "Sending message failed")
-                                }
+                            //todo
                         } catch (e: Exception) {
                             Log.e(TAG, "Exception while sending message", e)
                         }
