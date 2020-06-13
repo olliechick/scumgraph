@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.cast.framework.*
+import com.google.android.gms.common.api.Status
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_game.*
@@ -24,13 +25,17 @@ import java.util.*
 
 
 class GameActivity : AppCompatActivity(), OnStartDragListener {
-
     var roundNumber = 1
     var numberOfMiddlemen = 0
     var players = arrayListOf<Player>()
+    var chartData = null //todo create a format for this
     private var touchHelper: ItemTouchHelper? = null
+
     private var castContext: CastContext? = null
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
+    private var castSession: CastSession? = null
+    private var chartChannel: ChartChannel? = null
+
     private val TAG = "scumgraphlog"
 
     private inline fun <reified T> Gson.fromJson(json: String) =
@@ -46,11 +51,15 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         else arrayListOf()
 
         recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = GamePlayerListAdapter(numberOfMiddlemen, players, this, this)
+        val adapter = GamePlayerListAdapter(numberOfMiddlemen, players, this, this, ::updateChart)
         recyclerView.adapter = adapter
         val callback = SimpleItemTouchHelperCallback(adapter)
         touchHelper = ItemTouchHelper(callback)
         touchHelper?.attachToRecyclerView(recyclerView)
+    }
+
+    override fun onResume() {
+        super.onResume()
 
         castContext = CastContext.getSharedInstance(this)
         sessionManagerListener = getSessionManagerListener(this)
@@ -58,10 +67,11 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             sessionManagerListener as SessionManagerListener<CastSession>,
             CastSession::class.java
         )
+        updateChart()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
+    override fun onPause() {
+        super.onPause()
         sessionManagerListener?.let {
             castContext?.sessionManager?.removeSessionManagerListener(
                 it,
@@ -70,32 +80,34 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         }
     }
 
-    private fun getSessionManagerListener(context: Context): SessionManagerListener<CastSession> {
-        return object : SessionManagerListener<CastSession> {
-            override fun onSessionStarting(castSession: CastSession?) {}
+    private fun createChannel() {
+        if (castSession == null) castSession = castContext?.sessionManager?.currentCastSession
 
-            override fun onSessionStarted(castSession: CastSession?, sessionId: String) {
-                if (castSession != null) {
-                    try {
-                        //todo
-                        try {
-                            //todo
-                        } catch (e: Exception) {
-                            Log.e(TAG, "Exception while sending message", e)
-                        }
-                    } catch (e: IOException) {
-                        Log.e(TAG, "Exception while creating channel", e)
-                    }
-                }
+        if (castSession?.isConnected == true && chartChannel == null) {
+            castSession?.let {
+                chartChannel = ChartChannel()
+                Log.i(TAG, "creating chart channel")
+                it.setMessageReceivedCallbacks(
+                    chartChannel?.namespace,
+                    chartChannel
+                )
             }
+        }
+    }
 
-            override fun onSessionStartFailed(castSession: CastSession?, i: Int) {}
-            override fun onSessionEnding(castSession: CastSession?) {}
-            override fun onSessionEnded(castSession: CastSession?, i: Int) {}
-            override fun onSessionResuming(castSession: CastSession?, s: String) {}
-            override fun onSessionResumed(castSession: CastSession?, b: Boolean) {}
-            override fun onSessionResumeFailed(castSession: CastSession?, i: Int) {}
-            override fun onSessionSuspended(castSession: CastSession?, i: Int) {}
+    private fun updateChart() {
+        createChannel()
+        // todo: update chart object
+        chartChannel?.let {
+            Log.i(TAG, "updating chart...")
+            castContext?.sessionManager?.currentCastSession
+                ?.sendMessage(it.namespace, JSONObject(Gson().toJson(PlayerList(players))).toString()) //todo send chart data
+                ?.setResultCallback(fun(result: Status) {
+                    Log.i(TAG, result.status.toString())
+                    Log.i(TAG, result.statusCode.toString())
+                    Log.i(TAG, result.statusMessage ?: "no result status message")
+                    if (!result.isSuccess) Log.e(TAG, "Sending message failed")
+                })
         }
     }
 
@@ -110,6 +122,42 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         return true
     }
 
+    private fun getSessionManagerListener(context: GameActivity): SessionManagerListener<CastSession> {
+        return object : SessionManagerListener<CastSession> {
+            override fun onSessionStarting(castSession: CastSession?) {}
+
+            override fun onSessionStarted(castSession: CastSession?, sessionId: String) {
+                context.castSession = castSession
+                if (castSession != null) {
+                    try {
+                        createChannel()
+                        try {
+                            updateChart()
+                        } catch (e: Exception) {
+                            Log.e(TAG, "Exception while sending message", e)
+                        }
+                    } catch (e: IOException) {
+                        Log.e(TAG, "Exception while creating channel", e)
+                    }
+                }
+            }
+
+            override fun onSessionStartFailed(castSession: CastSession?, i: Int) {
+                context.castSession = null
+            }
+
+            override fun onSessionEnding(castSession: CastSession?) {}
+            override fun onSessionEnded(castSession: CastSession?, i: Int) {
+                context.castSession = null
+            }
+
+            override fun onSessionResuming(castSession: CastSession?, s: String) {}
+            override fun onSessionResumed(castSession: CastSession?, b: Boolean) {}
+            override fun onSessionResumeFailed(castSession: CastSession?, i: Int) {}
+            override fun onSessionSuspended(castSession: CastSession?, i: Int) {}
+        }
+    }
+
     override fun onStartDrag(viewHolder: RecyclerView.ViewHolder?) {
         if (viewHolder != null) touchHelper?.startDrag(viewHolder)
     }
@@ -117,5 +165,6 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     fun nextRound(view: View) {
         roundNumber++
         findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
+        updateChart()
     }
 }

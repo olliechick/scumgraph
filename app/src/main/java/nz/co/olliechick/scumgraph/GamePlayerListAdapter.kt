@@ -18,7 +18,8 @@ class GamePlayerListAdapter(
     private val numberOfMiddlemen: Int,
     private val players: ArrayList<Player>,
     private val dragStartListener: OnStartDragListener,
-    private val context: Context
+    private val context: Context,
+    private val notifyChartUpdated: () -> Unit
 ) :
     RecyclerView.Adapter<ItemViewHolder?>(),
     ItemTouchHelperAdapter {
@@ -70,5 +71,6 @@ class GamePlayerListAdapter(
         notifyItemMoved(fromPosition, toPosition)
         notifyItemChanged(fromPosition, false)
         notifyItemChanged(toPosition, false)
+        notifyChartUpdated()
     }
 }

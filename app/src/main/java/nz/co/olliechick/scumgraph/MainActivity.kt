@@ -29,7 +29,6 @@ import java.io.IOException
 
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -61,7 +60,6 @@ class MainActivity : AppCompatActivity() {
             layoutManager = viewManager
             adapter = viewAdapter
         }
-
     }
 
     override fun onResume() {
@@ -73,7 +71,17 @@ class MainActivity : AppCompatActivity() {
             sessionManagerListener as SessionManagerListener<CastSession>,
             CastSession::class.java
         )
-        createChannel()
+        updatePlayerList()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        sessionManagerListener?.let {
+            castContext?.sessionManager?.removeSessionManagerListener(
+                it,
+                CastSession::class.java
+            )
+        }
     }
 
     private fun createChannel() {
@@ -87,16 +95,6 @@ class MainActivity : AppCompatActivity() {
                     playerListChannel
                 )
             }
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        sessionManagerListener?.let {
-            castContext?.sessionManager?.removeSessionManagerListener(
-                it,
-                CastSession::class.java
-            )
         }
     }
 
@@ -123,7 +121,6 @@ class MainActivity : AppCompatActivity() {
         return true
     }
 
-
     private fun getSessionManagerListener(context: MainActivity): SessionManagerListener<CastSession> {
         return object : SessionManagerListener<CastSession> {
             override fun onSessionStarting(castSession: CastSession?) {}
@@ -133,7 +130,6 @@ class MainActivity : AppCompatActivity() {
                 if (castSession != null) {
                     try {
                         createChannel()
-
                         try {
                             updatePlayerList()
                         } catch (e: Exception) {

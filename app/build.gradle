@@ -27,7 +27,7 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.core:core-ktx:1.2.0'
+    implementation 'androidx.core:core-ktx:1.3.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
     testImplementation 'junit:junit:4.12'
     implementation "org.jetbrains.anko:anko-commons:0.10.4"
@@ -36,8 +36,8 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
 //    implementation 'petrov.kristiyan:colorpicker-library:1.1.10' todo revert to this when package is upgraded
     implementation project(':subproject:colorpicker:colorpicker-library')
-    implementation 'androidx.appcompat:appcompat:1.2.0-beta01'
-    implementation 'androidx.appcompat:appcompat-resources:1.2.0-beta01'
+    implementation 'androidx.appcompat:appcompat:1.3.0-alpha01'
+    implementation 'androidx.appcompat:appcompat-resources:1.3.0-alpha01'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'androidx.mediarouter:mediarouter:1.1.0'
     implementation 'com.google.android.gms:play-services-cast-framework:18.1.0'

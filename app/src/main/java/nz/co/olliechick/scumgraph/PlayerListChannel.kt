@@ -13,6 +13,6 @@ internal class PlayerListChannel : MessageReceivedCallback {
         castDevice: CastDevice, namespace: String,
         message: String
     ) {
-        Log.d("scumgraph", "onMessageReceived: $message")
+        Log.d("scumgraphlog", "playerlist onMessageReceived: $message")
     }
 }
