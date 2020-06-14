@@ -34,7 +34,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewManager: RecyclerView.LayoutManager
     private val players = arrayListOf(
         Player("", colourOptionToInt(ColourOption.BLUE)),
-        Player("", colourOptionToInt(ColourOption.RED))
+        Player("", colourOptionToInt(ColourOption.RED)),
+        Player("", colourOptionToInt(ColourOption.GREEN))
     )
     private var castContext: CastContext? = null
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
