@@ -1,9 +1,9 @@
 # Scum graph
 An Android app to view a graph to track players' progress for the card game Scum on a Chromecast.
 
-🚧 Currently under construction 🚧
+It will be available for download from [play.google.com/store/apps/details?id=nz.co.olliechick.scumgraph](https://play.google.com/store/apps/details?id=nz.co.olliechick.scumgraph) soon.
 
-The accompanying cast receiver app, which is what is displayed on the Chromecast (i.e. on the TV), is being developed at https://github.com/olliechick/scumgraph-cast.
+The source code for the accompanying cast receiver app, which is what is displayed on the Chromecast (i.e. on the TV), is available at [github.com/olliechick/scumgraph-cast](https://github.com/olliechick/scumgraph-cast).
 
 ## Running locally
 
