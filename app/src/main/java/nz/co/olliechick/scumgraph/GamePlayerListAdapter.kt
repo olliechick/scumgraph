@@ -2,9 +2,11 @@ package nz.co.olliechick.scumgraph
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.res.ColorStateList
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.ViewGroup
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.RecyclerView
 import nz.co.olliechick.scumgraph.draggablelist.ItemTouchHelperAdapter
 import nz.co.olliechick.scumgraph.draggablelist.ItemViewHolder
@@ -42,7 +44,7 @@ class GamePlayerListAdapter(
             if (event.actionMasked == MotionEvent.ACTION_DOWN) dragStartListener.onStartDrag(holder)
             false
         }
-        holder.itemView.setBackgroundColor(player.colour)
+        ViewCompat.setBackgroundTintList(holder.itemView, ColorStateList.valueOf(player.colour))
         holder.textView?.setTextColor(
             Colours.getTextColour(
                 player.colour

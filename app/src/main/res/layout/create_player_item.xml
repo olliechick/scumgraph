@@ -8,6 +8,7 @@
         android:id="@+id/pickColourButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:text="@string/pick_colour" />
 
@@ -15,6 +16,7 @@
         android:id="@+id/playerName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:autofillHints="name"
         android:ems="10"
@@ -26,6 +28,7 @@
         android:id="@+id/removeButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
         android:layout_weight="1"
         android:text="@string/remove" />
 </LinearLayout>

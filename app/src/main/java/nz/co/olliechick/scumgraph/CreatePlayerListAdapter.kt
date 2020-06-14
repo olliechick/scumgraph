@@ -1,6 +1,7 @@
 package nz.co.olliechick.scumgraph
 
 import android.app.Activity
+import android.content.res.ColorStateList
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.LinearLayout
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import nz.co.olliechick.scumgraph.util.ColourOption
@@ -91,14 +93,19 @@ class CreatePlayerListAdapter(
             }
 
             val colour = players[holder.adapterPosition].colour
-            holder.pickColourButton?.setBackgroundColor(colour)
+            holder.pickColourButton?.let {
+                ViewCompat.setBackgroundTintList(it, ColorStateList.valueOf(colour))
+            }
             holder.pickColourButton?.setTextColor(getTextColour(colour))
             holder.pickColourButton?.setOnClickListener {
                 val colorPicker = ColorPicker(activity)
                 colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
                     override fun onChooseColor(position: Int, colour: Int) {
                         players[holder.adapterPosition].colour = colour
-                        holder.pickColourButton.setBackgroundColor(colour)
+                        ViewCompat.setBackgroundTintList(
+                            holder.pickColourButton,
+                            ColorStateList.valueOf(colour)
+                        )
                         holder.pickColourButton.setTextColor(getTextColour(colour))
                         notifyPlayerListUpdated()
                     }
