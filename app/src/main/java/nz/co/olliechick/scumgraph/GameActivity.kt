@@ -90,7 +90,6 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         if (castSession?.isConnected == true && chartChannel == null) {
             castSession?.let {
                 chartChannel = ChartChannel()
-                Log.i(TAG, "creating chart channel")
                 it.setMessageReceivedCallbacks(
                     chartChannel?.namespace,
                     chartChannel
