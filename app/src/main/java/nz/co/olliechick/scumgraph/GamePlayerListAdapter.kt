@@ -44,7 +44,7 @@ class GamePlayerListAdapter(
             if (event.actionMasked == MotionEvent.ACTION_DOWN) dragStartListener.onStartDrag(holder)
             false
         }
-        ViewCompat.setBackgroundTintList(holder.itemView, ColorStateList.valueOf(player.colour))
+        holder.itemView.setBackgroundColor(player.colour)
         holder.textView?.setTextColor(
             Colours.getTextColour(
                 player.colour
