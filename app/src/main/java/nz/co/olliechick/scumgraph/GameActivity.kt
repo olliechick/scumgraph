@@ -165,6 +165,8 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     fun nextRound(@Suppress("UNUSED_PARAMETER") view: View) {
         roundNumber++
         findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
+        findViewById<TextView>(R.id.submitRoundButton).text =
+            getString(R.string.submit_round_n, roundNumber)
 
         chartData.playerHistories.forEach { playerHistory ->
             var position = 0

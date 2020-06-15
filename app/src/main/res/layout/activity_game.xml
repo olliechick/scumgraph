@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintBottom_toTopOf="@+id/submitRoundButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -33,11 +33,11 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/submitRoundButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:onClick="nextRound"
-        android:text="@string/next_round"
+        android:text="@string/submit_round_1"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
