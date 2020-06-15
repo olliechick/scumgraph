@@ -1,12 +1,14 @@
 package nz.co.olliechick.scumgraph
 
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
-import android.widget.TextView
+import android.widget.ArrayAdapter
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.cast.framework.CastButtonFactory
@@ -15,53 +17,50 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.common.api.Status
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_game.*
-import nz.co.olliechick.scumgraph.draggablelist.OnStartDragListener
-import nz.co.olliechick.scumgraph.draggablelist.SimpleItemTouchHelperCallback
-import nz.co.olliechick.scumgraph.util.Chart
+import kotlinx.android.synthetic.main.start_game_dialog.view.*
+import nz.co.olliechick.scumgraph.util.ColourOption
+import nz.co.olliechick.scumgraph.util.Colours.Companion.colourOptionToInt
+import nz.co.olliechick.scumgraph.util.MiddlemanOption
 import nz.co.olliechick.scumgraph.util.Player
-import nz.co.olliechick.scumgraph.util.ChartScoreForRound
-import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.calculateScore
+import nz.co.olliechick.scumgraph.util.PlayerList
+import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.generateMiddlemenOptions
 import org.json.JSONObject
 import java.io.IOException
-import java.util.*
 
 
-class GameActivity : AppCompatActivity(), OnStartDragListener {
-    var roundNumber = 1
-    var numberOfMiddlemen = 0
-    var players = arrayListOf<Player>()
-    var chartData = Chart(players)
-
-    private var touchHelper: ItemTouchHelper? = null
-
+class PlayerSelectionActivity : AppCompatActivity() {
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var viewAdapter: RecyclerView.Adapter<*>
+    private lateinit var viewManager: RecyclerView.LayoutManager
+    private val players = arrayListOf(
+        Player("", colourOptionToInt(ColourOption.BLUE)),
+        Player("", colourOptionToInt(ColourOption.RED)),
+        Player("", colourOptionToInt(ColourOption.GREEN))
+    )
     private var castContext: CastContext? = null
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
     private var castSession: CastSession? = null
-    private var chartChannel: ChartChannel? = null
+    private var playerListChannel: PlayerListChannel? = null
 
     private val TAG = "scumgraphlog"
 
-    private inline fun <reified T> Gson.fromJson(json: String) =
-        fromJson<T>(json, object : TypeToken<T>() {}.type)
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game)
-        numberOfMiddlemen = intent.getIntExtra("Number of middlemen", 0)
+        setContentView(R.layout.activity_player_selection)
 
-        val playersString = intent.getStringExtra("Players")
-        players = if (playersString != null) Gson().fromJson<ArrayList<Player>>(playersString)
-        else arrayListOf()
-        chartData = Chart(players)
+        viewManager = LinearLayoutManager(this)
+        viewAdapter = CreatePlayerListAdapter(
+            players, viewManager as LinearLayoutManager, this, ::updatePlayerList
+        )
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
-        val adapter = GamePlayerListAdapter(numberOfMiddlemen, players, this, this, ::updateChart)
-        recyclerView.adapter = adapter
-        val callback = SimpleItemTouchHelperCallback(adapter)
-        touchHelper = ItemTouchHelper(callback)
-        touchHelper?.attachToRecyclerView(recyclerView)
+        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
+            // use this setting to improve performance if you know that changes
+            // in content do not change the layout size of the RecyclerView
+            setHasFixedSize(true)
+
+            layoutManager = viewManager
+            adapter = viewAdapter
+        }
     }
 
     override fun onResume() {
@@ -73,7 +72,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             sessionManagerListener as SessionManagerListener<CastSession>,
             CastSession::class.java
         )
-        updateChart()
+        updatePlayerList()
     }
 
     override fun onPause() {
@@ -89,22 +88,23 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     private fun createChannel() {
         if (castSession == null) castSession = castContext?.sessionManager?.currentCastSession
 
-        if (castSession?.isConnected == true && chartChannel == null) {
+        if (castSession?.isConnected == true && playerListChannel == null) {
             castSession?.let {
-                chartChannel = ChartChannel()
+                playerListChannel = PlayerListChannel()
                 it.setMessageReceivedCallbacks(
-                    chartChannel?.namespace,
-                    chartChannel
+                    playerListChannel?.namespace,
+                    playerListChannel
                 )
             }
         }
     }
 
-    private fun updateChart() {
+    private fun updatePlayerList() {
         createChannel()
-        chartChannel?.let {
+        val players = JSONObject(Gson().toJson(PlayerList(players))).toString()
+        playerListChannel?.let {
             castContext?.sessionManager?.currentCastSession
-                ?.sendMessage(it.namespace, JSONObject(Gson().toJson(chartData)).toString())
+                ?.sendMessage(it.namespace, players)
                 ?.setResultCallback(fun(result: Status) {
                     if (!result.isSuccess) Log.e(TAG, "Sending message failed")
                 })
@@ -122,7 +122,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         return true
     }
 
-    private fun getSessionManagerListener(context: GameActivity): SessionManagerListener<CastSession> {
+    private fun getSessionManagerListener(context: PlayerSelectionActivity): SessionManagerListener<CastSession> {
         return object : SessionManagerListener<CastSession> {
             override fun onSessionStarting(castSession: CastSession?) {}
 
@@ -132,7 +132,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                     try {
                         createChannel()
                         try {
-                            updateChart()
+                            updatePlayerList()
                         } catch (e: Exception) {
                             Log.e(TAG, "Exception while sending message", e)
                         }
@@ -158,24 +158,40 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         }
     }
 
-    override fun onStartDrag(viewHolder: RecyclerView.ViewHolder?) {
-        if (viewHolder != null) touchHelper?.startDrag(viewHolder)
+    @SuppressLint("InflateParams")
+    fun startGame(@Suppress("UNUSED_PARAMETER") view1: View) {
+        if (players.size > 3) {
+            val view = layoutInflater.inflate(R.layout.start_game_dialog, null)
+
+            AlertDialog.Builder(this).run {
+                setView(view)
+                setTitle(getString(R.string.game_setup))
+                setPositiveButton("Start game") { _, _ -> openGameScreen((view.spinner.selectedItem as MiddlemanOption).number) }
+                setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+
+                ArrayAdapter(
+                    applicationContext,
+                    android.R.layout.simple_spinner_item,
+                    generateMiddlemenOptions(players.size)
+                ).also { adapter ->
+                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                    view.spinner.adapter = adapter
+                }
+
+                create()
+                show()
+            }
+        } else {
+            var numberOfMiddlemen = 0
+            if (players.size == 3) numberOfMiddlemen = 1
+            openGameScreen(numberOfMiddlemen)
+        }
     }
 
-    fun nextRound(@Suppress("UNUSED_PARAMETER") view: View) {
-        roundNumber++
-        findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
-
-        chartData.playerHistories.forEach { playerHistory ->
-            var position = 0
-            players.forEachIndexed { i, player ->
-                if (player.name == playerHistory.name) position = i
-            }
-            val currentScore = playerHistory.series.last().value
-            val newScore = currentScore + calculateScore(position, numberOfMiddlemen, players.size)
-            playerHistory.series.add(ChartScoreForRound(roundNumber - 1, newScore))
-        }
-
-        updateChart()
+    private fun openGameScreen(numberOfMiddlemen: Int) {
+        val intent = Intent(this, GameActivity::class.java)
+        intent.putExtra("Number of middlemen", numberOfMiddlemen)
+        intent.putExtra("Players", Gson().toJson(players))
+        startActivity(intent)
     }
 }
