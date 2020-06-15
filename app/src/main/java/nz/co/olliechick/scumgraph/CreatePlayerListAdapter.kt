@@ -119,12 +119,13 @@ class CreatePlayerListAdapter(
                         )
                         holder.pickColourButton.setTextColor(getTextColour(colour))
                         notifyPlayerListUpdated()
+                        notifyItemChanged(holder.adapterPosition)
                     }
 
                     override fun onCancel() {}
                 })
-                    .setColors(getAllColourOptions())
-                    .setDefaultColorButton(players[holder.adapterPosition].colour)
+                    .setColors(getAllColourOptions(players, colour))
+                    .setDefaultColorButton(colour)
                     .setRoundColorButton(true)
                     .show()
             }

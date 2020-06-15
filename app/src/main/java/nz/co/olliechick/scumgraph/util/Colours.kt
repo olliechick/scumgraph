@@ -47,18 +47,34 @@ class Colours {
             return -0x1000000 or red or green or blue //0xFF000000 for 100% Alpha. Bitwise OR everything together.
         }
 
-        fun getAllColourOptions(): ArrayList<String> {
+        fun getAllColourOptions(players: ArrayList<Player>, currentColour: Int): ArrayList<String> {
             val colourOptions = arrayListOf<String>()
+            val colourUsed = mutableMapOf<Int, Pair<Boolean, String>>()
+
             ColourOption.values().forEach { colourOption ->
-                colourOptions.add(ColourOption.valueOf(colourOption.toString()).colour)
+                val rgbColour = ColourOption.valueOf(colourOption.toString()).colour
+                colourOptions.add(rgbColour)
+                colourUsed[colourOptionToInt(rgbColour)] = Pair(false, rgbColour)
             }
-            return colourOptions
+
+            players.forEach { player ->
+                colourUsed[player.colour]?.let { colourUsed[player.colour] = Pair(true, it.second) }
+            }
+
+            val colourOptionsAvailable = arrayListOf<String>()
+            for ((colourInt, isUsed) in colourUsed) {
+                if (!isUsed.first || colourInt == currentColour) colourOptionsAvailable.add(isUsed.second)
+            }
+
+            return colourOptionsAvailable
         }
+
+        fun getAllColourOptions(players: ArrayList<Player>) = getAllColourOptions(players, -1)
 
         fun getNextFreeColour(players: ArrayList<Player>): Int {
             val colourUsed = mutableMapOf<Int, Boolean>()
 
-            val colourOptions = getAllColourOptions()
+            val colourOptions = getAllColourOptions(players)
             colourOptions.forEach { colourOption ->
                 colourUsed[colourOptionToInt(colourOption)] = false
             }
