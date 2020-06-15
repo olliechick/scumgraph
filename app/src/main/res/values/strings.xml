@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Scum graph</string>
-    <string name="app_id">724A3E63</string> <!-- from cast.google.com/publish (sample app: 4F8B3483) -->
+    <string name="app_id">724A3E63</string> <!-- from cast.google.com/publish (test app: AEC46D60) -->
     <string name="remove">Remove</string>
     <string name="players_name">Player\'s name</string>
     <string name="add_player">Add player</string>
