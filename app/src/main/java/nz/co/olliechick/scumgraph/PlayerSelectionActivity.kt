@@ -157,15 +157,37 @@ class PlayerSelectionActivity : AppCompatActivity() {
         }
     }
 
+    private fun getDuplicateNames(): List<String> {
+        return players.map(Player::name).groupingBy { it }.eachCount().filter { it.value > 1 }
+            .map { it.key }
+    }
+
     @SuppressLint("InflateParams")
     fun startGame(@Suppress("UNUSED_PARAMETER") view1: View) {
-        if (players.size > 3) {
+        val duplicateNames = getDuplicateNames()
+        if (duplicateNames.isNotEmpty()) {
+            var message = "Two players are not allowed to use the same name. Currently, there are multiple people named "
+            if (duplicateNames.size == 1) message += "${duplicateNames[0]}."
+            else if (duplicateNames.size == 2) message += "${duplicateNames[0]} and ${duplicateNames[1]}."
+            else {
+                duplicateNames.dropLast(1).forEach {
+                    message += "$it, "
+                }
+                message = "${message.dropLast(2)}, and ${duplicateNames.last()}."
+            }
+            android.app.AlertDialog.Builder(this).run {
+                setTitle("Error")
+                setMessage(message)
+                setPositiveButton("OK") { _, _ -> }
+                show()
+            }
+        } else if (players.size > 3) {
             val view = layoutInflater.inflate(R.layout.start_game_dialog, null)
 
             AlertDialog.Builder(this).run {
                 setView(view)
                 setTitle(getString(R.string.game_setup))
-                setPositiveButton("Start game") { _, _ -> openGameScreen((view.spinner.selectedItem as MiddlemanOption).number) }
+                setPositiveButton(getString(R.string.start_game)) { _, _ -> openGameScreen((view.spinner.selectedItem as MiddlemanOption).number) }
                 setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
 
                 ArrayAdapter(
@@ -180,11 +202,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
                 create()
                 show()
             }
-        } else {
-            var numberOfMiddlemen = 0
-            if (players.size == 3) numberOfMiddlemen = 1
-            openGameScreen(numberOfMiddlemen)
-        }
+        } else openGameScreen(1)
     }
 
     private fun openGameScreen(numberOfMiddlemen: Int) {
