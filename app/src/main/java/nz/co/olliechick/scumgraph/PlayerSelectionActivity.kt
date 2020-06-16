@@ -157,52 +157,67 @@ class PlayerSelectionActivity : AppCompatActivity() {
         }
     }
 
-    private fun getDuplicateNames(): List<String> {
-        return players.map(Player::name).groupingBy { it }.eachCount().filter { it.value > 1 }
+    private fun getDuplicateNames(): List<String> =
+        players.map(Player::name).groupingBy { it }.eachCount().filter { it.value > 1 }
             .map { it.key }
-    }
+
+    private fun hasEmptyNames(): Boolean = players.map(Player::name).contains("")
 
     @SuppressLint("InflateParams")
     fun startGame(@Suppress("UNUSED_PARAMETER") view1: View) {
         val duplicateNames = getDuplicateNames()
-        if (duplicateNames.isNotEmpty()) {
-            var message = "Two players are not allowed to use the same name. Currently, there are multiple people named "
-            if (duplicateNames.size == 1) message += "${duplicateNames[0]}."
-            else if (duplicateNames.size == 2) message += "${duplicateNames[0]} and ${duplicateNames[1]}."
-            else {
-                duplicateNames.dropLast(1).forEach {
-                    message += "$it, "
+        when {
+            hasEmptyNames() -> {
+                AlertDialog.Builder(this).run {
+                    setTitle(getString(R.string.error))
+                    setMessage(getString(R.string.give_everyone_a_name))
+                    setPositiveButton(getString(R.string.ok)) { _, _ -> }
+                    show()
                 }
-                message = "${message.dropLast(2)}, and ${duplicateNames.last()}."
             }
-            android.app.AlertDialog.Builder(this).run {
-                setTitle("Error")
-                setMessage(message)
-                setPositiveButton("OK") { _, _ -> }
-                show()
-            }
-        } else if (players.size > 3) {
-            val view = layoutInflater.inflate(R.layout.start_game_dialog, null)
-
-            AlertDialog.Builder(this).run {
-                setView(view)
-                setTitle(getString(R.string.game_setup))
-                setPositiveButton(getString(R.string.start_game)) { _, _ -> openGameScreen((view.spinner.selectedItem as MiddlemanOption).number) }
-                setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
-
-                ArrayAdapter(
-                    applicationContext,
-                    android.R.layout.simple_spinner_item,
-                    generateMiddlemenOptions(players.size)
-                ).also { adapter ->
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                    view.spinner.adapter = adapter
+            duplicateNames.isNotEmpty() -> {
+                var message = getString(R.string.two_player_not_allowed_same_name)
+                when (duplicateNames.size) {
+                    1 -> message += "${duplicateNames[0]}."
+                    2 -> message += getString(R.string.x_and_y_period, duplicateNames[0], duplicateNames[1])
+                    else -> {
+                        duplicateNames.dropLast(1).forEach {
+                            message += "$it, "
+                        }
+                        message = getString(R.string.x_comma_and_y_period, message.dropLast(2), duplicateNames.last())
+                    }
                 }
-
-                create()
-                show()
+                AlertDialog.Builder(this).run {
+                    setTitle(getString(R.string.error))
+                    setMessage(message)
+                    setPositiveButton(getString(R.string.ok)) { _, _ -> }
+                    show()
+                }
             }
-        } else openGameScreen(1)
+            players.size > 3 -> {
+                val view = layoutInflater.inflate(R.layout.start_game_dialog, null)
+
+                AlertDialog.Builder(this).run {
+                    setView(view)
+                    setTitle(getString(R.string.game_setup))
+                    setPositiveButton(getString(R.string.start_game)) { _, _ -> openGameScreen((view.spinner.selectedItem as MiddlemanOption).number) }
+                    setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+
+                    ArrayAdapter(
+                        applicationContext,
+                        android.R.layout.simple_spinner_item,
+                        generateMiddlemenOptions(players.size)
+                    ).also { adapter ->
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                        view.spinner.adapter = adapter
+                    }
+
+                    create()
+                    show()
+                }
+            }
+            else -> openGameScreen(1)
+        }
     }
 
     private fun openGameScreen(numberOfMiddlemen: Int) {

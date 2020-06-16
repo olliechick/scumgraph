@@ -22,4 +22,10 @@
     <string name="you_will_lose_progress">You will lose all your progress.</string>
     <string name="quit">Quit</string>
     <string name="stay">Stay</string>
+    <string name="error">Error</string>
+    <string name="give_everyone_a_name">Please give everyone a name before proceeding.</string>
+    <string name="ok">OK</string>
+    <string name="two_player_not_allowed_same_name">Two players are not allowed to use the same name. Currently, there are multiple people named\u0020</string>
+    <string name="x_and_y_period">%1$s and %2$s.</string>
+    <string name="x_comma_and_y_period">%1$s, and %2$s.</string>
 </resources>
