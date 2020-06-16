@@ -112,14 +112,17 @@ class CreatePlayerListAdapter(
                 val colorPicker = ColorPicker(activity)
                 colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
                     override fun onChooseColor(position: Int, colour: Int) {
-                        players[holder.adapterPosition].colour = colour
-                        ViewCompat.setBackgroundTintList(
-                            holder.pickColourButton,
-                            ColorStateList.valueOf(colour)
-                        )
-                        holder.pickColourButton.setTextColor(getTextColour(colour))
-                        notifyPlayerListUpdated()
-                        notifyItemChanged(holder.adapterPosition)
+                        try {
+                            players[holder.adapterPosition].colour = colour
+                            ViewCompat.setBackgroundTintList(
+                                holder.pickColourButton,
+                                ColorStateList.valueOf(colour)
+                            )
+                            holder.pickColourButton.setTextColor(getTextColour(colour))
+                            notifyPlayerListUpdated()
+                            notifyItemChanged(holder.adapterPosition)
+                        } catch (e: ArrayIndexOutOfBoundsException) {
+                        }
                     }
 
                     override fun onCancel() {}
