@@ -1,5 +1,6 @@
 package nz.co.olliechick.scumgraph
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -82,6 +83,16 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                 it,
                 CastSession::class.java
             )
+        }
+    }
+
+    override fun onBackPressed() {
+        AlertDialog.Builder(this).run {
+            setTitle(getString(R.string.are_you_sure_quit_game))
+            setMessage(getString(R.string.you_will_lose_progress))
+            setPositiveButton(getString(R.string.quit)) { _, _ -> super.onBackPressed() }
+            setNegativeButton(getString(R.string.stay)) { _, _ -> }
+            show()
         }
     }
 
