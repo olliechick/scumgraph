@@ -87,13 +87,15 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     }
 
     override fun onBackPressed() {
-        AlertDialog.Builder(this).run {
-            setTitle(getString(R.string.are_you_sure_quit_game))
-            setMessage(getString(R.string.you_will_lose_progress))
-            setPositiveButton(getString(R.string.quit)) { _, _ -> super.onBackPressed() }
-            setNegativeButton(getString(R.string.stay)) { _, _ -> }
-            show()
-        }
+        if (roundNumber > 1) {
+            AlertDialog.Builder(this).run {
+                setTitle(getString(R.string.are_you_sure_quit_game))
+                setMessage(getString(R.string.you_will_lose_progress))
+                setPositiveButton(getString(R.string.quit)) { _, _ -> super.onBackPressed() }
+                setNegativeButton(getString(R.string.stay)) { _, _ -> }
+                show()
+            }
+        } else super.onBackPressed()
     }
 
     private fun createChannel() {
