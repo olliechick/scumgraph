@@ -5,13 +5,10 @@ import com.google.android.gms.cast.Cast
 import com.google.android.gms.cast.CastDevice
 
 internal class ChartChannel : Cast.MessageReceivedCallback {
-    val namespace: String
-        get() = "urn:x-cast:nz.co.olliechick.scumgraph.chart"
+    val namespace: String get() = "urn:x-cast:nz.co.olliechick.scumgraph.chart"
 
     override fun onMessageReceived(
-        castDevice: CastDevice, namespace: String,
-        message: String
+        castDevice: CastDevice, namespace: String, message: String
     ) {
-        Log.d("scumgraphlog", "chart onMessageReceived: $message")
     }
 }

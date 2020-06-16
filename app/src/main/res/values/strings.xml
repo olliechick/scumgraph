@@ -18,4 +18,8 @@
     <string name="president">president</string>
     <string name="vice">vice</string>
     <string name="mead_route_menu_title">Display graph on…</string>
+    <string name="are_you_sure_quit_game">Are you sure you want to quit the game?</string>
+    <string name="you_will_lose_progress">You will lose all your progress.</string>
+    <string name="quit">Quit</string>
+    <string name="stay">Stay</string>
 </resources>

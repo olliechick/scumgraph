@@ -6,13 +6,10 @@ import com.google.android.gms.cast.CastDevice
 
 
 internal class PlayerListChannel : MessageReceivedCallback {
-    val namespace: String
-        get() = "urn:x-cast:nz.co.olliechick.scumgraph.playerlist"
+    val namespace: String get() = "urn:x-cast:nz.co.olliechick.scumgraph.playerlist"
 
     override fun onMessageReceived(
-        castDevice: CastDevice, namespace: String,
-        message: String
+        castDevice: CastDevice, namespace: String, message: String
     ) {
-        Log.d("scumgraphlog", "playerlist onMessageReceived: $message")
     }
 }

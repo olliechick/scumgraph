@@ -29,6 +29,7 @@ import java.io.IOException
 
 
 class PlayerSelectionActivity : AppCompatActivity() {
+    private val logTag = "scumgraphlog"
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
@@ -41,8 +42,6 @@ class PlayerSelectionActivity : AppCompatActivity() {
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
     private var castSession: CastSession? = null
     private var playerListChannel: PlayerListChannel? = null
-
-    private val TAG = "scumgraphlog"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,7 +105,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
             castContext?.sessionManager?.currentCastSession
                 ?.sendMessage(it.namespace, players)
                 ?.setResultCallback(fun(result: Status) {
-                    if (!result.isSuccess) Log.e(TAG, "Sending message failed")
+                    if (!result.isSuccess) Log.e(logTag, "Sending message failed")
                 })
         }
     }
@@ -134,10 +133,10 @@ class PlayerSelectionActivity : AppCompatActivity() {
                         try {
                             updatePlayerList()
                         } catch (e: Exception) {
-                            Log.e(TAG, "Exception while sending message", e)
+                            Log.e(logTag, "Exception while sending message", e)
                         }
                     } catch (e: IOException) {
-                        Log.e(TAG, "Exception while creating channel", e)
+                        Log.e(logTag, "Exception while creating channel", e)
                     }
                 }
             }

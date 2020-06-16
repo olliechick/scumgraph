@@ -20,8 +20,8 @@ import kotlinx.android.synthetic.main.activity_game.*
 import nz.co.olliechick.scumgraph.draggablelist.OnStartDragListener
 import nz.co.olliechick.scumgraph.draggablelist.SimpleItemTouchHelperCallback
 import nz.co.olliechick.scumgraph.util.Chart
-import nz.co.olliechick.scumgraph.util.Player
 import nz.co.olliechick.scumgraph.util.ChartScoreForRound
+import nz.co.olliechick.scumgraph.util.Player
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.calculateScore
 import org.json.JSONObject
 import java.io.IOException
@@ -29,6 +29,7 @@ import java.util.*
 
 
 class GameActivity : AppCompatActivity(), OnStartDragListener {
+    private val logTag = "scumgraphlog"
     var roundNumber = 1
     var numberOfMiddlemen = 0
     var players = arrayListOf<Player>()
@@ -40,8 +41,6 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
     private var castSession: CastSession? = null
     private var chartChannel: ChartChannel? = null
-
-    private val TAG = "scumgraphlog"
 
     private inline fun <reified T> Gson.fromJson(json: String) =
         fromJson<T>(json, object : TypeToken<T>() {}.type)
@@ -106,7 +105,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             castContext?.sessionManager?.currentCastSession
                 ?.sendMessage(it.namespace, JSONObject(Gson().toJson(chartData)).toString())
                 ?.setResultCallback(fun(result: Status) {
-                    if (!result.isSuccess) Log.e(TAG, "Sending message failed")
+                    if (!result.isSuccess) Log.e(logTag, "Sending message failed")
                 })
         }
     }
@@ -134,10 +133,10 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                         try {
                             updateChart()
                         } catch (e: Exception) {
-                            Log.e(TAG, "Exception while sending message", e)
+                            Log.e(logTag, "Exception while sending message", e)
                         }
                     } catch (e: IOException) {
-                        Log.e(TAG, "Exception while creating channel", e)
+                        Log.e(logTag, "Exception while creating channel", e)
                     }
                 }
             }
