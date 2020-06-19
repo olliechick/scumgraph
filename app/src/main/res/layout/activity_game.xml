@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/submitRoundButton"
+        app:layout_constraintBottom_toTopOf="@+id/undoRoundButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -33,6 +33,17 @@
     </LinearLayout>
 
     <Button
+        android:id="@+id/undoRoundButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:onClick="undoRound"
+        android:text="@string/go_back_to_player_selection"
+        app:layout_constraintBottom_toTopOf="@+id/submitRoundButton"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+    <Button
         android:id="@+id/submitRoundButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -41,6 +52,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+        app:layout_constraintTop_toBottomOf="@+id/undoRoundButton" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

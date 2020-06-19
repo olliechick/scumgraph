@@ -13,6 +13,8 @@
     <string name="submit_round_n">Submit round %1$d</string>
     <string name="round_1">Round 1</string>
     <string name="round_n">Round %1$d</string>
+    <string name="go_back_to_player_selection">Go back to player selection</string>
+    <string name="go_back_to_round_n">Go back to round %1$d</string>
     <string name="middleman">middleman</string>
     <string name="scum">scum</string>
     <string name="president">president</string>

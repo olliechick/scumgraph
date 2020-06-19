@@ -1,10 +1,12 @@
 package nz.co.olliechick.scumgraph
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.View
+import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
@@ -179,6 +181,8 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
         findViewById<TextView>(R.id.submitRoundButton).text =
             getString(R.string.submit_round_n, roundNumber)
+        findViewById<Button>(R.id.undoRoundButton).text =
+            getString(R.string.go_back_to_round_n, roundNumber - 1)
 
         chartData.playerHistories.forEach { playerHistory ->
             var position = 0
@@ -191,5 +195,29 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         }
 
         updateChart()
+    }
+
+    fun undoRound(@Suppress("UNUSED_PARAMETER") view: View) {
+        if (roundNumber > 1) {
+            roundNumber--
+
+            findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
+            findViewById<Button>(R.id.submitRoundButton).text =
+                getString(R.string.submit_round_n, roundNumber)
+            if (roundNumber == 1) findViewById<Button>(R.id.undoRoundButton).text =
+                getString(R.string.go_back_to_player_selection)
+            else findViewById<Button>(R.id.undoRoundButton).text =
+                getString(R.string.go_back_to_round_n, roundNumber - 1)
+
+            chartData.playerHistories.forEach { playerHistory ->
+                playerHistory.series.removeAt(playerHistory.series.size - 1)
+            }
+
+            updateChart()
+
+        } else {
+            val intent = Intent(this, PlayerSelectionActivity::class.java)
+            startActivity(intent)
+        }
     }
 }
