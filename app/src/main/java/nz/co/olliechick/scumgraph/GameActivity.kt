@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.TextView
@@ -28,6 +29,7 @@ import nz.co.olliechick.scumgraph.util.Player
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.calculateScore
 import org.json.JSONObject
 import java.io.IOException
+import java.net.URLEncoder
 import java.util.*
 
 
@@ -127,7 +129,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.gamemenu, menu)
+        menuInflater.inflate(R.menu.game_menu, menu)
         CastButtonFactory.setUpMediaRouteButton(
             applicationContext,
             menu,
@@ -219,5 +221,23 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             val intent = Intent(this, PlayerSelectionActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    fun shareGame(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
+        val params: String = URLEncoder.encode(chartData.toString(), "utf-8")
+        val url = "https://olliechick.co.nz/scumgraph/graph?chartdata=$params"
+        val message = "I just played a game of scum, you can go to $url to see the graph!\n\n" +
+                "Go to https://play.google.com/store/apps/details?id=nz.co.olliechick.scumgraph " +
+                "to download the app."
+
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, message)
+            putExtra(Intent.EXTRA_SUBJECT, "Scum graph")
+            type = "text/plain"
+        }
+
+        val shareIntent = Intent.createChooser(sendIntent, null)
+        startActivity(shareIntent)
     }
 }

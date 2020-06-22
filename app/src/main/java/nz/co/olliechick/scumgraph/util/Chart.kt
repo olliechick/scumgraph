@@ -19,4 +19,8 @@ class Chart(players: ArrayList<Player>) {
     private fun generateColours(players: ArrayList<Player>): ArrayList<Int> {
         return players.map(Player::colour) as ArrayList<@ColorInt Int>
     }
+
+    override fun toString(): String {
+        return "[[${colours.joinToString(",")}],${playerHistories.joinToString(",")}]"
+    }
 }

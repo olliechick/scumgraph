@@ -112,7 +112,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         super.onCreateOptionsMenu(menu)
-        menuInflater.inflate(R.menu.gamemenu, menu)
+        menuInflater.inflate(R.menu.player_selection_menu, menu)
         CastButtonFactory.setUpMediaRouteButton(
             applicationContext,
             menu,
