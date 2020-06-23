@@ -17,6 +17,7 @@ import com.google.android.gms.cast.framework.CastSession
 import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.common.api.Status
 import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.start_game_dialog.view.*
 import nz.co.olliechick.scumgraph.util.ColourOption
 import nz.co.olliechick.scumgraph.util.Colours.Companion.colourOptionToInt
@@ -26,6 +27,7 @@ import nz.co.olliechick.scumgraph.util.PlayerList
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.generateMiddlemenOptions
 import org.json.JSONObject
 import java.io.IOException
+import java.util.ArrayList
 
 
 class PlayerSelectionActivity : AppCompatActivity() {
@@ -33,7 +35,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private val players = arrayListOf(
+    private var players = arrayListOf(
         Player("", colourOptionToInt(ColourOption.BLUE)),
         Player("", colourOptionToInt(ColourOption.RED)),
         Player("", colourOptionToInt(ColourOption.GREEN))
@@ -43,9 +45,15 @@ class PlayerSelectionActivity : AppCompatActivity() {
     private var castSession: CastSession? = null
     private var playerListChannel: PlayerListChannel? = null
 
+    private inline fun <reified T> Gson.fromJson(json: String) =
+        fromJson<T>(json, object : TypeToken<T>() {}.type)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_player_selection)
+
+        val playersString = intent.getStringExtra("Players")
+        if (playersString != null) players = Gson().fromJson<ArrayList<Player>>(playersString)
 
         viewManager = LinearLayoutManager(this)
         viewAdapter = CreatePlayerListAdapter(
