@@ -220,6 +220,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         } else {
             val intent = Intent(this, PlayerSelectionActivity::class.java)
             intent.putExtra("Players", Gson().toJson(players))
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
         }
     }
