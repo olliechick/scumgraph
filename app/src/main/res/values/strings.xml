@@ -31,4 +31,5 @@
     <string name="x_and_y_period">%1$s and %2$s.</string>
     <string name="x_comma_and_y_period">%1$s, and %2$s.</string>
     <string name="share">Share</string>
+    <string name="open_graph">Open graph</string>
 </resources>

@@ -12,5 +12,9 @@
         android:onClick="shareGame"
         android:title="@string/share"
         app:showAsAction="ifRoom" />
+    <item
+        android:onClick="openGraph"
+        android:title="@string/open_graph"
+        app:showAsAction="ifRoom" />
 
 </menu>

@@ -242,4 +242,16 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         val shareIntent = Intent.createChooser(sendIntent, null)
         startActivity(shareIntent)
     }
+
+    fun openGraph(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
+        val params: String = URLEncoder.encode(chartData.toString(), "utf-8")
+        val url = "https://olliechick.co.nz/scumgraph/graph?chartdata=$params"
+
+        val openGraphIntent: Intent = Intent().apply {
+            action = Intent.ACTION_VIEW
+            data = Uri.parse(url)
+        }
+
+        startActivity(openGraphIntent)
+    }
 }
