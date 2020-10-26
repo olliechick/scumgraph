@@ -2,6 +2,7 @@ package nz.co.olliechick.scumgraph
 
 import android.app.AlertDialog
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -228,7 +229,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     fun shareGame(@Suppress("UNUSED_PARAMETER") item: MenuItem) {
         val params: String = URLEncoder.encode(chartData.toString(), "utf-8")
         val url = "https://olliechick.co.nz/scumgraph/graph?chartdata=$params"
-        val message = "I just played a game of scum, you can go to $url to see the graph!\n\n" +
+        val message = "I just played a game of scum, here's the graph: $url\n\n" +
                 "Go to https://play.google.com/store/apps/details?id=nz.co.olliechick.scumgraph " +
                 "to download the app."
 
