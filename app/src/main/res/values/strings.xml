@@ -35,4 +35,6 @@
     <string name="are_you_sure_delete_player">Are you sure you want to remove %1$s from the game?</string>
     <string name="you_cant_add_them_back">If you do, you won\'t be able to add them back into this game.</string>
     <string name="test">test</string>
+    <string name="remove_player">Remove player</string>
+    <string name="move_player">Move player</string>
 </resources>
