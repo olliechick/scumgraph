@@ -189,12 +189,19 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
 
         chartData.playerHistories.forEach { playerHistory ->
             var position = 0
+            var stillInGame = false
             players.forEachIndexed { i, player ->
-                if (player.name == playerHistory.name) position = i
+                if (player.name == playerHistory.name) {
+                    position = i
+                    stillInGame = true
+                }
             }
-            val currentScore = playerHistory.series.last().value
-            val newScore = currentScore + calculateScore(position, numberOfMiddlemen, players.size)
-            playerHistory.series.add(ChartScoreForRound(roundNumber - 1, newScore))
+            if (stillInGame) {
+                val currentScore = playerHistory.series.last().value
+                val newScore =
+                    currentScore + calculateScore(position, numberOfMiddlemen, players.size)
+                playerHistory.series.add(ChartScoreForRound(roundNumber - 1, newScore))
+            }
         }
 
         updateChart()
