@@ -6,6 +6,8 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
@@ -294,7 +296,6 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                     .show()
             }
 
-
             ArrayAdapter(
                 applicationContext,
                 android.R.layout.simple_spinner_item,
@@ -309,7 +310,25 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             }
 
             it.create()
-            it.show()
+            val dialog = it.show()
+            val addPlayerButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
+            addPlayerButton.isEnabled = false
+
+            view.playerName.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable) {
+                    val newName = s.toString()
+                    addPlayerButton.isEnabled =
+                        newName.isNotEmpty() && newName !in players.map { player -> player.name }
+                }
+
+                override fun beforeTextChanged(
+                    s: CharSequence, start: Int, count: Int, after: Int
+                ) = Unit
+
+                override fun onTextChanged(
+                    s: CharSequence, start: Int, before: Int, count: Int
+                ) = Unit
+            })
         }
     }
 
