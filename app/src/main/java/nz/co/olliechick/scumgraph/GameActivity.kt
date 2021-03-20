@@ -290,8 +290,8 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
 
                     override fun onCancel() {}
                 })
-//                    .setColors(Colours.getAllColourOptions(players, colour))
-//                    .setDefaultColorButton(colour)
+                    .setColors(Colours.getAllColourOptions(players, newColour))
+                    .setDefaultColorButton(newColour)
                     .setRoundColorButton(true)
                     .show()
             }
