@@ -317,8 +317,24 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             view.playerName.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable) {
                     val newName = s.toString()
-                    addPlayerButton.isEnabled =
-                        newName.isNotEmpty() && newName !in players.map { player -> player.name }
+                    when {
+                        newName.isEmpty() -> {
+                            addPlayerButton.isEnabled = false
+                            view.errorText.text = getString(R.string.error_enter_name)
+                            view.errorText.visibility = View.VISIBLE
+                        }
+                        newName in players.map { player -> player.name } -> {
+                            addPlayerButton.isEnabled = false
+                            view.errorText.text =
+                                getString(R.string.error_another_player_has_name, newName)
+                            view.errorText.visibility = View.VISIBLE
+                        }
+                        else -> {
+                            view.errorText.visibility = View.GONE
+                            addPlayerButton.isEnabled = true
+                            view.errorText.text = ""
+                        }
+                    }
                 }
 
                 override fun beforeTextChanged(

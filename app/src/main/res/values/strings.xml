@@ -38,4 +38,6 @@
     <string name="remove_player">Remove player</string>
     <string name="move_player">Move player</string>
     <string name="add_new_player">Add new player</string>
+    <string name="error_enter_name">Error: Please enter a name.</string>
+    <string name="error_another_player_has_name">Error: Another player has the name %1$s.</string>
 </resources>
