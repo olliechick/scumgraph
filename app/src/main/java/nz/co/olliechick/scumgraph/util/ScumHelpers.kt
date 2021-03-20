@@ -13,7 +13,7 @@ class ScumHelpers {
                 var numberOfPresidents = numberOfPlayers / 2
                 options.add(
                     MiddlemanOption(
-                        "$numberOfPresidents president${if (numberOfPresidents != 1) "s" else ""}, No middlemen, $numberOfPresidents scum",
+                        "$numberOfPresidents president${if (numberOfPresidents != 1) "s" else ""}, no middlemen, $numberOfPresidents scum",
                         0
                     )
                 )
@@ -55,6 +55,29 @@ class ScumHelpers {
                 }
                 options
             }
+        }
+
+        fun generateMiddlemenOptionsForMidgame(
+            numberOfMiddlemenOriginally: Int,
+            numPlayers: Int
+        ): ArrayList<MiddlemanOption> {
+            val options = arrayListOf<MiddlemanOption>()
+            for (i in arrayOf(-1, 1)) {
+                val numberOfMiddlemen = numberOfMiddlemenOriginally + i
+                val numberOfNonMiddlemen = numPlayers - numberOfMiddlemen
+                val numberOfPresidents = numberOfNonMiddlemen / 2
+
+                val presidentsDescription = "$numberOfPresidents president${if (numberOfPresidents != 1) "s" else ""}"
+                val middlemenDescription = (if(numberOfMiddlemen == 0) "no" else "$numberOfMiddlemen") + if (numberOfMiddlemen != 1) " middlemen" else " middleman"
+                val scumDescription = "$numberOfPresidents scum"
+                options.add(
+                    MiddlemanOption(
+                        "${presidentsDescription}, $middlemenDescription, $scumDescription (${if (i>0) "add" else "remove"} middleman)",
+                        numberOfMiddlemen
+                    )
+                )
+            }
+            return options
         }
 
         private fun calculateNumberOfScum(numberOfMiddlemen: Int, numberOfPlayers: Int): Int {

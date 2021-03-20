@@ -5,6 +5,12 @@ class ChartPlayerHistory(
     val series: ArrayList<ChartScoreForRound>
 ) {
     override fun toString(): String {
-        return "[\"$name\",${series.joinToString(",")}]"
+        val firstRound = series[0].name
+        val seriesRep = when {
+            series.size == 0 -> "0"
+            firstRound > 0 -> arrayOfNulls<Int>(firstRound).joinToString(",") + "," + series.joinToString(",")
+            else -> series.joinToString(",")
+        }
+        return "[\"$name\",$seriesRep]"
     }
 }

@@ -1,16 +1,20 @@
 package nz.co.olliechick.scumgraph
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,13 +26,15 @@ import com.google.android.gms.common.api.Status
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.android.synthetic.main.activity_game.*
+import kotlinx.android.synthetic.main.create_player_item.view.*
 import nz.co.olliechick.scumgraph.draggablelist.OnStartDragListener
 import nz.co.olliechick.scumgraph.draggablelist.SimpleItemTouchHelperCallback
-import nz.co.olliechick.scumgraph.util.Chart
-import nz.co.olliechick.scumgraph.util.ChartScoreForRound
-import nz.co.olliechick.scumgraph.util.Player
+import nz.co.olliechick.scumgraph.util.*
+import nz.co.olliechick.scumgraph.util.Colours.Companion.getNextFreeColour
+import nz.co.olliechick.scumgraph.util.Colours.Companion.getTextColour
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.calculateScore
 import org.json.JSONObject
+import petrov.kristiyan.colorpicker.ColorPicker
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.*
@@ -230,6 +236,80 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             intent.putExtra("Players", Gson().toJson(players))
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
+        }
+    }
+
+    @SuppressLint("InflateParams")
+    fun addPlayer(@Suppress("UNUSED_PARAMETER") view1: View) {
+        val view = layoutInflater.inflate(R.layout.create_player_item, null)
+
+        var newColour = getNextFreeColour(players)
+
+        AlertDialog.Builder(this).let {
+            it.setView(view)
+            it.setTitle(getString(R.string.add_new_player))
+            it.setPositiveButton(getString(R.string.add_player)) { _, _ ->
+                val name = view.playerName.text.toString()
+                players.add(Player(name, newColour))
+                recyclerView.adapter?.notifyDataSetChanged()
+
+                numberOfMiddlemen =
+                    if (numberOfMiddlemen == 0) 1 else (view.spinner.selectedItem as MiddlemanOption).number
+                (recyclerView.adapter as GamePlayerListAdapter).numberOfMiddlemen =
+                    numberOfMiddlemen
+
+                this.chartData.colours.add(newColour)
+                this.chartData.playerHistories.add(
+                    ChartPlayerHistory(
+                        name,
+                        arrayListOf(ChartScoreForRound(roundNumber - 1, 0))
+                    )
+                )
+            }
+            it.setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
+            view.pickColourButton?.let {
+                ViewCompat.setBackgroundTintList(it, ColorStateList.valueOf(newColour))
+            }
+            view.pickColourButton?.setTextColor(getTextColour(newColour))
+            view.pickColourButton?.setOnClickListener {
+                val colorPicker = ColorPicker(this)
+                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
+                    override fun onChooseColor(position: Int, colour: Int) {
+                        try {
+                            newColour = colour
+                            ViewCompat.setBackgroundTintList(
+                                view.pickColourButton,
+                                ColorStateList.valueOf(colour)
+                            )
+                            view.pickColourButton.setTextColor(getTextColour(colour))
+                        } catch (e: ArrayIndexOutOfBoundsException) {
+                        }
+                    }
+
+                    override fun onCancel() {}
+                })
+//                    .setColors(Colours.getAllColourOptions(players, colour))
+//                    .setDefaultColorButton(colour)
+                    .setRoundColorButton(true)
+                    .show()
+            }
+
+
+            ArrayAdapter(
+                applicationContext,
+                android.R.layout.simple_spinner_item,
+                ScumHelpers.generateMiddlemenOptionsForMidgame(numberOfMiddlemen, players.size + 1)
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                view.spinner.adapter = adapter
+            }
+
+            if (numberOfMiddlemen == 0) {
+                view.spinner.visibility = View.GONE
+            }
+
+            it.create()
+            it.show()
         }
     }
 

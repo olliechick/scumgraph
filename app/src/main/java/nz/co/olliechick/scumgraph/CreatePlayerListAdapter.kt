@@ -37,7 +37,7 @@ class CreatePlayerListAdapter(
     }
 
     override fun getItemViewType(position: Int) =
-        if (position == players.size) R.layout.add_player_button else R.layout.create_player_item
+        if (position == players.size) R.layout.add_player_button else R.layout.create_player_removable_item
 
     // Create new views (invoked by the layout manager)
     override fun onCreateViewHolder(

@@ -37,4 +37,5 @@
     <string name="test">test</string>
     <string name="remove_player">Remove player</string>
     <string name="move_player">Move player</string>
+    <string name="add_new_player">Add new player</string>
 </resources>

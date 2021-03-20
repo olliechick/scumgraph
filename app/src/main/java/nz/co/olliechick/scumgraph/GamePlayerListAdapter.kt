@@ -17,7 +17,7 @@ import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.generateTitle
 import java.util.*
 
 class GamePlayerListAdapter(
-    private val numberOfMiddlemen: Int,
+    var numberOfMiddlemen: Int,
     private val players: ArrayList<Player>,
     private val dragStartListener: OnStartDragListener,
     private val context: Context,
