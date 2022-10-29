@@ -35,11 +35,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
     private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
-    private var players = arrayListOf(
-        Player("", colourOptionToInt(ColourOption.BLUE)),
-        Player("", colourOptionToInt(ColourOption.RED)),
-        Player("", colourOptionToInt(ColourOption.GREEN))
-    )
+    private var players = arrayListOf(Player("", colourOptionToInt(ColourOption.BLUE)))
     private var castContext: CastContext? = null
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
     private var castSession: CastSession? = null
@@ -170,11 +166,20 @@ class PlayerSelectionActivity : AppCompatActivity() {
             .map { it.key }
 
     private fun hasEmptyNames(): Boolean = players.map(Player::name).contains("")
+    private fun hasNotEnoughPlayers(): Boolean = players.size < 3
 
     @SuppressLint("InflateParams")
     fun startGame(@Suppress("UNUSED_PARAMETER") view1: View) {
         val duplicateNames = getDuplicateNames()
         when {
+            hasNotEnoughPlayers() -> {
+                AlertDialog.Builder(this).run {
+                    setTitle(getString(R.string.error))
+                    setMessage(getString(R.string.not_enough_players))
+                    setPositiveButton(getString(R.string.ok)) { _, _ -> }
+                    show()
+                }
+            }
             hasEmptyNames() -> {
                 AlertDialog.Builder(this).run {
                     setTitle(getString(R.string.error))
@@ -187,12 +192,20 @@ class PlayerSelectionActivity : AppCompatActivity() {
                 var message = getString(R.string.two_player_not_allowed_same_name)
                 when (duplicateNames.size) {
                     1 -> message += "${duplicateNames[0]}."
-                    2 -> message += getString(R.string.x_and_y_period, duplicateNames[0], duplicateNames[1])
+                    2 -> message += getString(
+                        R.string.x_and_y_period,
+                        duplicateNames[0],
+                        duplicateNames[1]
+                    )
                     else -> {
                         duplicateNames.dropLast(1).forEach {
                             message += "$it, "
                         }
-                        message = getString(R.string.x_comma_and_y_period, message.dropLast(2), duplicateNames.last())
+                        message = getString(
+                            R.string.x_comma_and_y_period,
+                            message.dropLast(2),
+                            duplicateNames.last()
+                        )
                     }
                 }
                 AlertDialog.Builder(this).run {

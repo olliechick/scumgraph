@@ -56,12 +56,8 @@ class CreatePlayerListAdapter(
             holder.button?.setOnClickListener {
                 players.add(Player("", getNextFreeColour(players)))
                 notifyPlayerListUpdated()
-                if (players.size == 4) {
-                    notifyDataSetChanged()
-                } else {
-                    notifyItemInserted(players.size - 1)
-                    notifyItemRangeChanged(players.size - 1, players.size)
-                }
+                notifyItemInserted(players.size - 1)
+                notifyItemRangeChanged(players.size - 1, players.size)
                 manager.scrollToPosition(players.size)
             }
             holder.button?.isEnabled = players.size < ColourOption.values().size
@@ -90,18 +86,12 @@ class CreatePlayerListAdapter(
                 val pos = holder.adapterPosition
                 if (pos != -1) {
                     players.removeAt(pos)
-                    if (players.size == 3) {
-                        notifyDataSetChanged()
-                    } else {
-                        notifyItemRemoved(pos)
-                        notifyItemRangeChanged(pos, players.size)
-                    }
+                    notifyItemRemoved(pos)
+                    notifyItemRangeChanged(pos, players.size)
 
                     notifyPlayerListUpdated()
                 }
             }
-
-            holder.removeButton?.isEnabled = players.size > 3
 
             val colour = players[holder.adapterPosition].colour
             holder.pickColourButton?.let {
