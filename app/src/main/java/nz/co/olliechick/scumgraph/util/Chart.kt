@@ -1,7 +1,5 @@
 package nz.co.olliechick.scumgraph.util
 
-import androidx.annotation.ColorInt
-
 class Chart(players: ArrayList<Player>) {
     val playerHistories = generateEmptyHistory(players)
     val colours = generateColours(players)
@@ -17,7 +15,7 @@ class Chart(players: ArrayList<Player>) {
     }
 
     private fun generateColours(players: ArrayList<Player>): ArrayList<Int> {
-        return players.map(Player::colour) as ArrayList<@ColorInt Int>
+        return players.map(Player::colour) as ArrayList<Int>
     }
 
     override fun toString(): String {

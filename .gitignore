@@ -149,9 +149,6 @@ hs_err_pid*
 
 # Generated files
 
-# Gradle files
-.gradle
-
 # Signing files
 .signing/
 
@@ -186,6 +183,8 @@ obj/
 .idea/caches/
 .idea/libraries/
 .idea/shelf/
+.idea/workspace.xml
+.idea/tasks.xml
 .idea/.name
 .idea/compiler.xml
 .idea/copyright/profiles_settings.xml
@@ -199,9 +198,9 @@ obj/
 .idea/sqlDataSources.xml
 .idea/dynamic.xml
 .idea/uiDesigner.xml
+.idea/jarRepositories.xml
 
 # OS-specific files
-.DS_Store
 .DS_Store?
 ._*
 .Spotlight-V100

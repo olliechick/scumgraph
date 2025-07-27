@@ -17,7 +17,6 @@ import nz.co.olliechick.scumgraph.util.Colours.Companion.getAllColourOptions
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getNextFreeColour
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getTextColour
 import nz.co.olliechick.scumgraph.util.Player
-import petrov.kristiyan.colorpicker.ColorPicker
 
 
 class CreatePlayerListAdapter(
@@ -98,30 +97,30 @@ class CreatePlayerListAdapter(
                 ViewCompat.setBackgroundTintList(it, ColorStateList.valueOf(colour))
             }
             holder.pickColourButton?.setTextColor(getTextColour(colour))
-            holder.pickColourButton?.setOnClickListener {
-                val colorPicker = ColorPicker(activity)
-                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
-                    override fun onChooseColor(position: Int, colour: Int) {
-                        try {
-                            players[holder.adapterPosition].colour = colour
-                            ViewCompat.setBackgroundTintList(
-                                holder.pickColourButton,
-                                ColorStateList.valueOf(colour)
-                            )
-                            holder.pickColourButton.setTextColor(getTextColour(colour))
-                            notifyPlayerListUpdated()
-                            notifyItemChanged(holder.adapterPosition)
-                        } catch (e: ArrayIndexOutOfBoundsException) {
-                        }
-                    }
-
-                    override fun onCancel() {}
-                })
-                    .setColors(getAllColourOptions(players, colour))
-                    .setDefaultColorButton(colour)
-                    .setRoundColorButton(true)
-                    .show()
-            }
+//            holder.pickColourButton?.setOnClickListener {
+//                val colorPicker = ColorPicker(activity)
+//                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
+//                    override fun onChooseColor(position: Int, colour: Int) {
+//                        try {
+//                            players[holder.adapterPosition].colour = colour
+//                            ViewCompat.setBackgroundTintList(
+//                                holder.pickColourButton,
+//                                ColorStateList.valueOf(colour)
+//                            )
+//                            holder.pickColourButton.setTextColor(getTextColour(colour))
+//                            notifyPlayerListUpdated()
+//                            notifyItemChanged(holder.adapterPosition)
+//                        } catch (e: ArrayIndexOutOfBoundsException) {
+//                        }
+//                    }
+//
+//                    override fun onCancel() {}
+//                })
+//                    .setColors(getAllColourOptions(players, colour))
+//                    .setDefaultColorButton(colour)
+//                    .setRoundColorButton(true)
+//                    .show()
+//            }
         }
     }
 
