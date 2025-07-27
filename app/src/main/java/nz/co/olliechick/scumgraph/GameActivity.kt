@@ -27,8 +27,8 @@ import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.common.api.Status
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.activity_game.*
-import kotlinx.android.synthetic.main.create_player_item.view.*
+import nz.co.olliechick.scumgraph.databinding.ActivityGameBinding
+import nz.co.olliechick.scumgraph.databinding.CreatePlayerItemBinding
 import nz.co.olliechick.scumgraph.draggablelist.OnStartDragListener
 import nz.co.olliechick.scumgraph.draggablelist.SimpleItemTouchHelperCallback
 import nz.co.olliechick.scumgraph.util.*
@@ -36,7 +36,7 @@ import nz.co.olliechick.scumgraph.util.Colours.Companion.getNextFreeColour
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getTextColour
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.calculateScore
 import org.json.JSONObject
-import petrov.kristiyan.colorpicker.ColorPicker
+//import petrov.kristiyan.colorpicker.ColorPicker
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.*
@@ -56,12 +56,16 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
     private var castSession: CastSession? = null
     private var chartChannel: ChartChannel? = null
 
+    private lateinit var binding: ActivityGameBinding // Binding for activity_game.xml
+
     private inline fun <reified T> Gson.fromJson(json: String) =
         fromJson<T>(json, object : TypeToken<T>() {}.type)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_game)
+        binding = ActivityGameBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
         numberOfMiddlemen = intent.getIntExtra("Number of middlemen", 0)
 
         val playersString = intent.getStringExtra("Players")
@@ -69,12 +73,12 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         else arrayListOf()
         chartData = Chart(players)
 
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        binding.recyclerView.layoutManager = LinearLayoutManager(this)
         val adapter = GamePlayerListAdapter(numberOfMiddlemen, players, this, this, ::updateChart)
-        recyclerView.adapter = adapter
+        binding.recyclerView.adapter = adapter
         val callback = SimpleItemTouchHelperCallback(adapter)
         touchHelper = ItemTouchHelper(callback)
-        touchHelper?.attachToRecyclerView(recyclerView)
+        touchHelper?.attachToRecyclerView(binding.recyclerView)
     }
 
     override fun onResume() {
@@ -189,11 +193,9 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
 
     fun nextRound(@Suppress("UNUSED_PARAMETER") view: View) {
         roundNumber++
-        findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
-        findViewById<TextView>(R.id.submitRoundButton).text =
-            getString(R.string.submit_round_n, roundNumber)
-        findViewById<Button>(R.id.undoRoundButton).text =
-            getString(R.string.go_back_to_round_n, roundNumber - 1)
+        binding.roundNumber.text = getString(R.string.round_n, roundNumber)
+        binding.submitRoundButton.text = getString(R.string.submit_round_n, roundNumber)
+        binding.undoRoundButton.text = getString(R.string.go_back_to_round_n, roundNumber - 1)
 
         chartData.playerHistories.forEach { playerHistory ->
             var position = 0
@@ -219,12 +221,11 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
         if (roundNumber > 1) {
             roundNumber--
 
-            findViewById<TextView>(R.id.roundNumber).text = getString(R.string.round_n, roundNumber)
-            findViewById<Button>(R.id.submitRoundButton).text =
-                getString(R.string.submit_round_n, roundNumber)
-            if (roundNumber == 1) findViewById<Button>(R.id.undoRoundButton).text =
+            binding.roundNumber.text = getString(R.string.round_n, roundNumber)
+            binding.submitRoundButton.text = getString(R.string.submit_round_n, roundNumber)
+            if (roundNumber == 1) binding.undoRoundButton.text =
                 getString(R.string.go_back_to_player_selection)
-            else findViewById<Button>(R.id.undoRoundButton).text =
+            else binding.undoRoundButton.text =
                 getString(R.string.go_back_to_round_n, roundNumber - 1)
 
             chartData.playerHistories.forEach { playerHistory ->
@@ -243,21 +244,23 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
 
     @SuppressLint("InflateParams")
     fun addPlayer(@Suppress("UNUSED_PARAMETER") view1: View) {
-        val view = layoutInflater.inflate(R.layout.create_player_item, null)
+        // --- START View Binding for create_player_item.xml ---
+        val createPlayerItemBinding = CreatePlayerItemBinding.inflate(layoutInflater)
+        val viewToSet = createPlayerItemBinding.root // Get the root view for AlertDialog
 
         var newColour = getNextFreeColour(players)
 
         AlertDialog.Builder(this).let {
-            it.setView(view)
+            it.setView(viewToSet) // Set the inflated view to the AlertDialog
             it.setTitle(getString(R.string.add_new_player))
             it.setPositiveButton(getString(R.string.add_player)) { _, _ ->
-                val name = view.playerName.text.toString()
+                val name = createPlayerItemBinding.playerName.text.toString() // Use binding
                 players.add(Player(name, newColour))
-                recyclerView.adapter?.notifyDataSetChanged()
+                binding.recyclerView.adapter?.notifyDataSetChanged() // Main activity's RecyclerView
 
                 numberOfMiddlemen =
-                    if (numberOfMiddlemen == 0) 1 else (view.spinner.selectedItem as MiddlemanOption).number
-                (recyclerView.adapter as GamePlayerListAdapter).numberOfMiddlemen =
+                    if (numberOfMiddlemen == 0) 1 else (createPlayerItemBinding.spinner.selectedItem as MiddlemanOption).number // Use binding
+                (binding.recyclerView.adapter as GamePlayerListAdapter).numberOfMiddlemen = // Main activity's RecyclerView
                     numberOfMiddlemen
 
                 this.chartData.colours.add(newColour)
@@ -269,32 +272,35 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                 )
             }
             it.setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
-            view.pickColourButton?.let {
+            createPlayerItemBinding.pickColourButton?.let { // Use binding
                 ViewCompat.setBackgroundTintList(it, ColorStateList.valueOf(newColour))
             }
-            view.pickColourButton?.setTextColor(getTextColour(newColour))
-            view.pickColourButton?.setOnClickListener {
-                val colorPicker = ColorPicker(this)
-                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
-                    override fun onChooseColor(position: Int, colour: Int) {
-                        try {
-                            newColour = colour
-                            ViewCompat.setBackgroundTintList(
-                                view.pickColourButton,
-                                ColorStateList.valueOf(colour)
-                            )
-                            view.pickColourButton.setTextColor(getTextColour(colour))
-                        } catch (e: ArrayIndexOutOfBoundsException) {
-                        }
-                    }
+            createPlayerItemBinding.pickColourButton?.setTextColor(getTextColour(newColour)) // Use binding
 
-                    override fun onCancel() {}
-                })
-                    .setColors(Colours.getAllColourOptions(players, newColour))
-                    .setDefaultColorButton(newColour)
-                    .setRoundColorButton(true)
-                    .show()
-            }
+            // The ColorPicker block remains commented out, but if uncommented, you'd use
+            // createPlayerItemBinding.pickColourButton instead of view.pickColourButton
+//            view.pickColourButton?.setOnClickListener {
+//                val colorPicker = ColorPicker(this)
+//                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
+//                    override fun onChooseColor(position: Int, colour: Int) {
+//                        try {
+//                            newColour = colour
+//                            ViewCompat.setBackgroundTintList(
+//                                createPlayerItemBinding.pickColourButton, // Use binding
+//                                ColorStateList.valueOf(colour)
+//                            )
+//                            createPlayerItemBinding.pickColourButton.setTextColor(getTextColour(colour)) // Use binding
+//                        } catch (e: ArrayIndexOutOfBoundsException) {
+//                        }
+//                    }
+//
+//                    override fun onCancel() {}
+//                })
+//                    .setColors(Colours.getAllColourOptions(players, newColour))
+//                    .setDefaultColorButton(newColour)
+//                    .setRoundColorButton(true)
+//                    .show()
+//            }
 
             ArrayAdapter(
                 applicationContext,
@@ -302,11 +308,11 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                 ScumHelpers.generateMiddlemenOptionsForMidgame(numberOfMiddlemen, players.size + 1)
             ).also { adapter ->
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                view.spinner.adapter = adapter
+                createPlayerItemBinding.spinner.adapter = adapter // Use binding
             }
 
             if (numberOfMiddlemen == 0) {
-                view.spinner.visibility = View.GONE
+                createPlayerItemBinding.spinner.visibility = View.GONE // Use binding
             }
 
             it.create()
@@ -314,25 +320,25 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             val addPlayerButton = dialog.getButton(AlertDialog.BUTTON_POSITIVE)
             addPlayerButton.isEnabled = false
 
-            view.playerName.addTextChangedListener(object : TextWatcher {
+            createPlayerItemBinding.playerName.addTextChangedListener(object : TextWatcher { // Use binding
                 override fun afterTextChanged(s: Editable) {
                     val newName = s.toString()
                     when {
                         newName.isEmpty() -> {
                             addPlayerButton.isEnabled = false
-                            view.errorText.text = getString(R.string.error_enter_name)
-                            view.errorText.visibility = View.VISIBLE
+                            createPlayerItemBinding.errorText.text = getString(R.string.error_enter_name) // Use binding
+                            createPlayerItemBinding.errorText.visibility = View.VISIBLE // Use binding
                         }
                         newName in players.map { player -> player.name } -> {
                             addPlayerButton.isEnabled = false
-                            view.errorText.text =
+                            createPlayerItemBinding.errorText.text = // Use binding
                                 getString(R.string.error_another_player_has_name, newName)
-                            view.errorText.visibility = View.VISIBLE
+                            createPlayerItemBinding.errorText.visibility = View.VISIBLE // Use binding
                         }
                         else -> {
-                            view.errorText.visibility = View.GONE
+                            createPlayerItemBinding.errorText.visibility = View.GONE // Use binding
                             addPlayerButton.isEnabled = true
-                            view.errorText.text = ""
+                            createPlayerItemBinding.errorText.text = "" // Use binding
                         }
                     }
                 }
@@ -346,6 +352,7 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
                 ) = Unit
             })
         }
+        // --- END View Binding for create_player_item.xml ---
     }
 
     fun shareGame(@Suppress("UNUSED_PARAMETER") item: MenuItem) {

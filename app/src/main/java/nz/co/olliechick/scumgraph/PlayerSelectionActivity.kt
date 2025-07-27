@@ -18,7 +18,8 @@ import com.google.android.gms.cast.framework.SessionManagerListener
 import com.google.android.gms.common.api.Status
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.android.synthetic.main.start_game_dialog.view.*
+import nz.co.olliechick.scumgraph.databinding.ActivityPlayerSelectionBinding
+import nz.co.olliechick.scumgraph.databinding.StartGameDialogBinding
 import nz.co.olliechick.scumgraph.util.ColourOption
 import nz.co.olliechick.scumgraph.util.Colours.Companion.colourOptionToInt
 import nz.co.olliechick.scumgraph.util.MiddlemanOption
@@ -32,7 +33,6 @@ import java.util.ArrayList
 
 class PlayerSelectionActivity : AppCompatActivity() {
     private val logTag = "scumgraphlog"
-    private lateinit var recyclerView: RecyclerView
     private lateinit var viewAdapter: RecyclerView.Adapter<*>
     private lateinit var viewManager: RecyclerView.LayoutManager
     private var players = arrayListOf(Player("", colourOptionToInt(ColourOption.BLUE)))
@@ -40,13 +40,15 @@ class PlayerSelectionActivity : AppCompatActivity() {
     private var sessionManagerListener: SessionManagerListener<CastSession>? = null
     private var castSession: CastSession? = null
     private var playerListChannel: PlayerListChannel? = null
+    private lateinit var binding: ActivityPlayerSelectionBinding
 
     private inline fun <reified T> Gson.fromJson(json: String) =
         fromJson<T>(json, object : TypeToken<T>() {}.type)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_player_selection)
+        binding = ActivityPlayerSelectionBinding.inflate(layoutInflater)
+        setContentView(binding.root) // Set content view using binding's root
 
         val playersString = intent.getStringExtra("Players")
         if (playersString != null) players = Gson().fromJson<ArrayList<Player>>(playersString)
@@ -56,7 +58,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
             players, viewManager as LinearLayoutManager, this, ::updatePlayerList
         )
 
-        recyclerView = findViewById<RecyclerView>(R.id.recyclerView).apply {
+        binding.recyclerView.apply {
             // use this setting to improve performance if you know that changes
             // in content do not change the layout size of the RecyclerView
             setHasFixedSize(true)
@@ -216,12 +218,15 @@ class PlayerSelectionActivity : AppCompatActivity() {
                 }
             }
             players.size > 3 -> {
-                val view = layoutInflater.inflate(R.layout.start_game_dialog, null)
+                val startGameDialogBinding = StartGameDialogBinding.inflate(layoutInflater)
+                val dialogView = startGameDialogBinding.root
 
                 AlertDialog.Builder(this).run {
-                    setView(view)
+                    setView(dialogView)
                     setTitle(getString(R.string.game_setup))
-                    setPositiveButton(getString(R.string.start_game)) { _, _ -> openGameScreen((view.spinner.selectedItem as MiddlemanOption).number) }
+                    setPositiveButton(getString(R.string.start_game), { _, _ ->
+                        openGameScreen((startGameDialogBinding.spinner.selectedItem as MiddlemanOption).number)
+                    })
                     setNegativeButton(getString(R.string.cancel)) { dialog, _ -> dialog.cancel() }
 
                     ArrayAdapter(
@@ -230,7 +235,7 @@ class PlayerSelectionActivity : AppCompatActivity() {
                         generateMiddlemenOptions(players.size)
                     ).also { adapter ->
                         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-                        view.spinner.adapter = adapter
+                        startGameDialogBinding.spinner.adapter = adapter
                     }
 
                     create()

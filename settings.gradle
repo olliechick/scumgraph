@@ -1,2 +1,2 @@
-include ':app', ':subproject:colorpicker:colorpicker-library'
+include ':app'
 rootProject.name='Scum graph'

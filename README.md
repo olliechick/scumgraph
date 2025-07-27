@@ -7,12 +7,4 @@ The source code for the accompanying cast receiver app, which is what is display
 
 ## Running locally
 
-* Download the subproject.
-
-```
-mkdir subproject
-cd subproject
-git clone git@github.com:kristiyanP/colorpicker.git
-```
-
 * Import the project into Android Studio and run it. For more detailed instructions, see https://developer.android.com/studio/run.
