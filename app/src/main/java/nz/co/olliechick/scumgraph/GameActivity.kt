@@ -31,12 +31,13 @@ import nz.co.olliechick.scumgraph.databinding.ActivityGameBinding
 import nz.co.olliechick.scumgraph.databinding.CreatePlayerItemBinding
 import nz.co.olliechick.scumgraph.draggablelist.OnStartDragListener
 import nz.co.olliechick.scumgraph.draggablelist.SimpleItemTouchHelperCallback
+import nz.co.olliechick.scumgraph.colorpicker.ColorPickerDialog
 import nz.co.olliechick.scumgraph.util.*
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getNextFreeColour
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getTextColour
 import nz.co.olliechick.scumgraph.util.ScumHelpers.Companion.calculateScore
 import org.json.JSONObject
-//import petrov.kristiyan.colorpicker.ColorPicker
+
 import java.io.IOException
 import java.net.URLEncoder
 import java.util.*
@@ -277,30 +278,21 @@ class GameActivity : AppCompatActivity(), OnStartDragListener {
             }
             createPlayerItemBinding.pickColourButton?.setTextColor(getTextColour(newColour)) // Use binding
 
-            // The ColorPicker block remains commented out, but if uncommented, you'd use
-            // createPlayerItemBinding.pickColourButton instead of view.pickColourButton
-//            view.pickColourButton?.setOnClickListener {
-//                val colorPicker = ColorPicker(this)
-//                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
-//                    override fun onChooseColor(position: Int, colour: Int) {
-//                        try {
-//                            newColour = colour
-//                            ViewCompat.setBackgroundTintList(
-//                                createPlayerItemBinding.pickColourButton, // Use binding
-//                                ColorStateList.valueOf(colour)
-//                            )
-//                            createPlayerItemBinding.pickColourButton.setTextColor(getTextColour(colour)) // Use binding
-//                        } catch (e: ArrayIndexOutOfBoundsException) {
-//                        }
-//                    }
-//
-//                    override fun onCancel() {}
-//                })
-//                    .setColors(Colours.getAllColourOptions(players, newColour))
-//                    .setDefaultColorButton(newColour)
-//                    .setRoundColorButton(true)
-//                    .show()
-//            }
+            createPlayerItemBinding.pickColourButton?.setOnClickListener {
+                val colorPickerDialog = ColorPickerDialog(this, newColour)
+                colorPickerDialog.setOnColorPickedListener { pickedColor ->
+                    try {
+                        newColour = pickedColor
+                        ViewCompat.setBackgroundTintList(
+                            createPlayerItemBinding.pickColourButton,
+                            ColorStateList.valueOf(pickedColor)
+                        )
+                        createPlayerItemBinding.pickColourButton.setTextColor(getTextColour(pickedColor))
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                    }
+                }
+                colorPickerDialog.show()
+            }
 
             ArrayAdapter(
                 applicationContext,
