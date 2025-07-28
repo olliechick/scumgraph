@@ -20,7 +20,7 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import nz.co.olliechick.scumgraph.databinding.ActivityPlayerSelectionBinding
 import nz.co.olliechick.scumgraph.databinding.StartGameDialogBinding
-import nz.co.olliechick.scumgraph.util.ColourOption
+import nz.co.olliechick.scumgraph.colorpicker.ColourOption
 import nz.co.olliechick.scumgraph.util.Colours.Companion.colourOptionToInt
 import nz.co.olliechick.scumgraph.util.MiddlemanOption
 import nz.co.olliechick.scumgraph.util.Player

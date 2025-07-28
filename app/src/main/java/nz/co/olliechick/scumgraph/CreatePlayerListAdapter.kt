@@ -12,8 +12,8 @@ import android.widget.LinearLayout
 import androidx.core.view.ViewCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import nz.co.olliechick.scumgraph.util.ColourOption
-import nz.co.olliechick.scumgraph.util.Colours.Companion.getAllColourOptions
+import nz.co.olliechick.scumgraph.colorpicker.ColorPickerDialog
+import nz.co.olliechick.scumgraph.colorpicker.ColourOption
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getNextFreeColour
 import nz.co.olliechick.scumgraph.util.Colours.Companion.getTextColour
 import nz.co.olliechick.scumgraph.util.Player
@@ -97,30 +97,23 @@ class CreatePlayerListAdapter(
                 ViewCompat.setBackgroundTintList(it, ColorStateList.valueOf(colour))
             }
             holder.pickColourButton?.setTextColor(getTextColour(colour))
-//            holder.pickColourButton?.setOnClickListener {
-//                val colorPicker = ColorPicker(activity)
-//                colorPicker.setOnChooseColorListener(object : ColorPicker.OnChooseColorListener {
-//                    override fun onChooseColor(position: Int, colour: Int) {
-//                        try {
-//                            players[holder.adapterPosition].colour = colour
-//                            ViewCompat.setBackgroundTintList(
-//                                holder.pickColourButton,
-//                                ColorStateList.valueOf(colour)
-//                            )
-//                            holder.pickColourButton.setTextColor(getTextColour(colour))
-//                            notifyPlayerListUpdated()
-//                            notifyItemChanged(holder.adapterPosition)
-//                        } catch (e: ArrayIndexOutOfBoundsException) {
-//                        }
-//                    }
-//
-//                    override fun onCancel() {}
-//                })
-//                    .setColors(getAllColourOptions(players, colour))
-//                    .setDefaultColorButton(colour)
-//                    .setRoundColorButton(true)
-//                    .show()
-//            }
+            holder.pickColourButton?.setOnClickListener {
+                val colorPickerDialog = ColorPickerDialog(activity, players[holder.adapterPosition].colour)
+                colorPickerDialog.setOnColorPickedListener { pickedColor ->
+                    try {
+                        players[holder.adapterPosition].colour = pickedColor
+                        ViewCompat.setBackgroundTintList(
+                            holder.pickColourButton,
+                            ColorStateList.valueOf(pickedColor)
+                        )
+                        holder.pickColourButton.setTextColor(getTextColour(pickedColor))
+                        notifyPlayerListUpdated()
+                        notifyItemChanged(holder.adapterPosition)
+                    } catch (e: ArrayIndexOutOfBoundsException) {
+                    }
+                }
+                colorPickerDialog.show()
+            }
         }
     }
 

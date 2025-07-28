@@ -1,4 +1,4 @@
-package nz.co.olliechick.scumgraph.util
+package nz.co.olliechick.scumgraph.colorpicker
 
 // colour list adapted from https://sashat.me/2017/01/11/list-of-20-simple-distinct-colors/
 enum class ColourOption(val colour: String) {
