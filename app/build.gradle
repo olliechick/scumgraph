@@ -4,14 +4,14 @@ apply plugin: 'kotlin-android'
 
 android {
     namespace 'nz.co.olliechick.scumgraph'
-    compileSdkVersion 35
-    buildToolsVersion "35.0.0"
+    compileSdkVersion 36
+    buildToolsVersion "36.0.0"
     defaultConfig {
         applicationId "nz.co.olliechick.scumgraph"
-        minSdkVersion 21
-        targetSdkVersion 34
-        versionCode 15
-        versionName "6.3"
+        minSdkVersion 24
+        targetSdkVersion 36
+        versionCode 17
+        versionName "6.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
     buildTypes {
@@ -22,8 +22,8 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_24 // Keep this at 1.8 for broader Android compatibility, or match your toolchain if you only target newer APIs and use desugaring.
-        targetCompatibility JavaVersion.VERSION_24 // As above
+        sourceCompatibility JavaVersion.VERSION_17 // Keep this at 1.8 for broader Android compatibility, or match your toolchain if you only target newer APIs and use desugaring.
+        targetCompatibility JavaVersion.VERSION_17 // As above
     }
 
     buildFeatures {
@@ -32,12 +32,12 @@ android {
 }
 
 kotlin {
-    jvmToolchain(24)
+    jvmToolchain(17)
 }
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 
